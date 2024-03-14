@@ -2,61 +2,55 @@
 
 Elixir è un linguaggio di programmazione dinamico e funzionale
 sviluppato nel 2012 da José Valim,
-con l'obbiettivo di consentire una maggiore estensibilità
+con l'obbiettivo di favorire una maggiore scalabilità
 e produttività nella macchinia virtuale di Erlang,
 mantenendo al contempo la compatibilità con l'ecosistema
 di Erlang\cite{Elixirpr12:online}.
-Per questo Elixir si è affermato come una scelta promettente
-nell'industria del software, mettendosi in rilievo proprio
-dove l'applicazione ha bisogno di essere scalabile, tollerante
-agli errori, e responsivo grazie all' approccio concorrenziale.
+Elixir si è affermato come una promettente scelta
+nell'industria del software,specialmente in contesti dove è
+richiesta scalabilità, tolleranza agli errori e reattività 
+grazie al suo approccio concorrenziale.
 
-In particolare, Elixir può essere una scelta utile anche nel
-dominio dell' IoT per vari motivi, alcuni dei quali sono: 
+
+In particolare, Elixir può risultare vantaggioso nel campo dell'IoT per diversi motivi:
 \begin{enumerate}
-	\item \textbf{Concorrenza}: Nell'IoT la concorrenza
-	e la scalabilità sono fondamentali, proprio in quest'ambito
-	possono esserci numerosi dispositivi che devono essere monitorati
-	e controllati contemporaneamente,e la capacità di gestire
-	facilmente la concorrenza è fondamentale.
-	%TODO migliorare fault tolerance
-	\item \textbf{Fault Tolerance}: Soprattutto controllando
-	dispositivi hardware, dobbiamo tenere in conto che questi
-	possono improvvisamente smettere di funzionare, ed Elixir
-	può essere in grado di controllare processi che vanno in
-	errore facilmente con la supervisione. 
-	\item \textbf{Sviluppo Rapido e Manutenzione}: Elixir è un linguaggio
-	moderno, imparando dalla storia ormai i linguaggi moderni forniscono
-	una sintassi efficiente e snella con feature essenziali,
-	fornendo un build tool (Mix) che fornisce la gestione delle dipendenze
-	attraverso il package Manager Hex \cite{Hex63:online},
-	un ambiente interattivo(iex) e supporta la generazione automatica della
-	documentazione.
+	\item \textbf{Concorrenza}: Nell'ambito dell'IoT, la gestione simultanea
+	di dispositivi è essenziale. Elixir, grazie alla sua capacità 
+	di gestire facilmente la concorrenza, consente il monitoraggio
+	e il controllo efficiente di numerosi dispositivi contemporaneamente.
+	\item \textbf{Fault Tolerance}: 
+	Data la natura degli ambienti IoT, dove i dispositivi possono
+	guastarsi improvvisamente, Elixir offre strumenti per la supervisione
+	e la gestione degli errori, garantendo la continuità delle operazioni
+	anche in caso di fallimenti.
+	\item \textbf{Sviluppo Rapido e Manutenzione}:
+	Elixir è un linguaggio moderno che offre una sintassi efficiente e snella,
+	oltre a strumenti di sviluppo come Mix per la gestione delle dipendenze
+	e l'ambiente interattivo iex. La presenza di un package manager (Hex)\cite{Hex63:online}
+	e la possibilità di generare automaticamente la documentazione
+	facilitano il processo di sviluppo e manutenzione del codice.
+	
 \end{enumerate}
 
-Il lavoro di tesi vuole mettere in luce i punti di forza di un linguaggio
-funzionale e come essi vengono sfruttati in Elixir, si vuole mettere in
-evidenza anche la semplicità nell'usare più processi, nel fare una scelta
-la semplicità anche ricopre un ruolo
-chiave, deve essere adatto e alla portata di
-qualsiasi programmatore. La semplicità è un punto chiave ma un buon linguaggio
-deve essere il più efficiente possibile almeno per gli ambiti di interesse,
-per questo vengono fatti una serie di test empirici per valutare le performance
-di questo.
-
-tutto sulle performance probabilmente non esisterebbe python.
-
+Il trattato esplora Elixir concentrandosi su due aspetti principali:
+la semplicità e le performance. Si analizzano i punti di forza di 
+un linguaggio funzionale e come questi sono sfruttati in Elixir, con 
+un focus sulla concorrenza. Nella scelta di un linguaggio, la semplicità
+è fondamentale e deve essere accessibile a tutti i programmatori.
+Tuttavia, l'efficienza è altrettanto importante, quindi vengono condotti
+test empirici per valutare le performance di Elixir.
 
 In particolare il lavoro effettuato è così ripartito: 
 
+
 \begin{itemize}
-	% \item Da correggere
-	\item Nel capitolo 2 si accenna al linguaggio funzionale ed al
-	lambda calcolo, come questo paradigma differisce
-	rispetto ad un linguaggio basato su stati. Si spiegano anche
-	le astrazioni che Elixir fornisce per poter	sviluppare codice affidabile
+	\item Nel capitolo 2 si discute del linguaggio funzionale,
+	esaminando le astrazioni offerte da Elixir per lo svilluppo
+	di codice affidabile, si tratta la concorrenza e come la Erlang VM
+	si occupa della gestione dei processi.
+	% TODO migliorare
 	\item Nel capitolo 3 si spiega il lavoro sperimentale svolto e i risultati
-	ottenuti
+	ottenuti (continuare)
 
 \end{itemize}
 
