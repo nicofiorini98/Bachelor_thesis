@@ -1,63 +1,25 @@
 // {
 //     "latex-workshop.latex.recipes": [
 //         {
-//             "name": "pdflatex -> biber -> pdflatex*2",
+//             "name": "arara",
 //             "tools": [
-//                 "pdflatex",
-//                 "biber",
-//                 "pdflatex",
-//                 "pdflatex"
+//                 "arara"
 //             ]
 //         }
 //     ],
 //     "latex-workshop.latex.tools": [
 //         {
-//             "name": "pdflatex",
-//             "command": "pdflatex",
+//             "name": "arara",
+//             "command": "arara",
 //             "args": [
-//                 "-synctex=1",
-//                 "-interaction=nonstopmode",
-//                 "-file-line-error",
 //                 "%DOC%"
-//             ]
-//         },
-//         {
-//             "name": "biber",
-//             "command": "biber",
+//             ],
 //             "args": [
-//                 "%DOCFILE%"
+//                "--verbose",
+//                "--log",
+//                "--max-loops=1",
+//                "%DOC%"
 //             ]
 //         }
-//     ],
-//     "latex-workshop.latex.clean.fileTypes": [
-//         "*.aux",
-//         "*.bbl",
-//         "*.blg",
-//         "*.idx",
-//         "*.ind",
-//         "*.lof",
-//         "*.lot",
-//         "*.out",
-//         "*.toc",
-//         "*.acn",
-//         "*.acr",
-//         "*.alg",
-//         "*.glg",
-//         "*.glo",
-//         "*.gls",
-//         "*.ist",
-//         "*.fls",
-//         "*.log",
-//         "*.fdb_latexmk",
-//         "*.snm",
-//         "*.synctex(busy)",
-//         "*.synctex.gz(busy)",
-//         "*.nav",
-//         "*.vrb",
-//         "*.bcf",
-//         "*.run.xml",
-//         "*.xdv",
-//         "*.loa",
-//         "*.blx.bib"
 //     ]
 // }

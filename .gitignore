@@ -1,3 +1,17 @@
+*.aux
+/*/*.aux
+/*/*/*.aux
+/*/*/*/*.aux
+
 /main.bbl
 /main.run.xml
 /main.synctex.gz
+/main.aux
+/main.blg
+/main.log
+/main.run.xml
+/main.toc
+/main.bcf
+/settings.json
+
+Tesi D'Epiro Fausta Luisa.pdf

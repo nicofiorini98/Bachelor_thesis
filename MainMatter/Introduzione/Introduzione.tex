@@ -1,4 +1,68 @@
 \chapter{Introduzione}
 
+Elixir è un linguaggio sviluppato nel 2012 da José Valim,
+con l'obbiettivo di consentire una maggiore estensibilità
+e produttività nella macchinia virtuale di Erlang,
+mantenendo al contempo la compatibilità con l'ecosistema
+di Erlang\cite{Elixirpr12:online}.
+Per questo Elixir si è affermato come una scelta promettente
+nell'industria del software, mettendosi in rilievo proprio
+dove l'applicazione ha bisogno di essere scalabile, tollerante
+agli errori, e responsivo grazie all' approccio concorrenziale.
 
-\lipsum
+In particolare, Elixir può essere una scelta utile anche nel
+dominio dell' IoT per vari motivi: 
+\begin{itemize}
+	\item \textbf{Concorrenza}: Nell'IoT la concorrenza
+	e la scalabilità sono fondamentali, proprio in quest'ambito
+	possono esserci numerosi dispositivi che devono essere monitorati
+	e controllati contemporaneamente,e la capacità di gestire
+	facilmente la concorrenza è fondamentale.
+	%TODO migliorare fault tolerance
+	\item \textbf{Fault Tolerance}: Soprattutto controllando
+	dispositivi hardware, dobbiamo tenere in conto che questi
+	possono improvvisamente smettere di funzionare, ed Elixir
+	può essere in grado di controllare processi che vanno in
+	errore facilmente con la supervisione. 
+	\item \textbf{Sviluppo Rapido e Manutenzione}: Elixir è un linguaggio
+	abbastanza recente, la sintassi è snella e con feature essenziali,
+	fornendo un build tool (Mix) che fornisce la gestione delle dipendenze
+	attraverso il package Manager Hex \cite{Hex63:online},
+	un ambiente interattivo(iex) e supporta la generazione automatica della
+	documentazione .
+\end{itemize}
+
+
+Per questo Elixir si è affermato come una scelta promettente
+nell'industria del software, proprio nell'a
+Elixir si è affermato come una scelta promettente
+nell'industria del software grazie ai vantaggi offerti
+dal paradigma funzionale e dall'approccio 
+all'immutabilità dei dati.
+Questa combinazione consente lo sviluppo di software
+estremamente robusto. 
+In particolare, l'uso dell'immutabilità dei dati in 
+Elixir semplifica significativamente la programmazione
+concorrente eliminando la necessità di gestire dati
+condivisi tra processi, il che porta a una maggiore
+chiarezza e affidabilità nel codice evitando i possibili
+comportamenti indeterminati che si potrebbero ottenere
+in un linguaggio basato su stati.
+
+
+Il codice è compilato per la macchina virtuale Beam,
+anche detta Erlang VM, quindi un programmatore Elixir 
+può chiamare qualsiasi funzione Erlang senza 
+un costo di overhead durante l'esecuzione,
+dando ampio spazio alla completa piattaforma OTP di
+cui Erlang fa uso.\cite{OpenTele88:online}
+
+Elixir in particolare è un linguaggio moderno, infatti
+arriva con molti vantaggi nell'utilizzarlo rispetto ad
+Erlang, infatti tutto ciò che si può fare con Elixir
+si può fare anche con Erlang, ma Elixir porta ad un
+livello superiore la semplicità di espressione
+del codice attraverso una sintassi snella e comprensiva.
+
+
+
