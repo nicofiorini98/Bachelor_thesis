@@ -1,7 +1,7 @@
 % arara: pdflatex: { shell: yes }
 % arara: biber 
-% arara: pdflatex
-% arara: pdflatex
+% arara: pdflatex: { shell: yes }
+% arara: pdflatex: { shell: yes }
 
 
 
@@ -57,6 +57,8 @@
 \usepackage{algpseudocode}  %load automatically the algorithmicx package
 \usepackage{customization} % IMport custom preamble 
 \usepackage[hidelinks]{hyperref}
+\usepackage{minted} % for language highlight
+\usemintedstyle{friendly}
 \hypersetup{
     pdfstartview = XYZ null null 1.00,  % open the generated pdf with 100% zoom by default
     pdftitle={Tesi}, 

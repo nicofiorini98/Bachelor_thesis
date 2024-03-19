@@ -1,0 +1,59 @@
+\section{Il paradigma funzionale}
+Come già accennato Elixir è un linguaggio funzionale, dove
+il concetto di funzione ricopre il ruolo di protagonista,
+i dati sono immutabili e il codice è dichiarativo.
+
+Questo modo di vedere le cose deriva dal Lambda calcolo o $\lambda$-calcolo
+\cite{Lambdaca75:online}
+un sistema formale definito da Alonzo Church nel 1936, sviluppato
+per definire formalmente le funzioni e il loro calcolo.
+
+In un paradigma basato su stati come la programmazione ad oggetti
+spesso si hanno variabili condivise mutabili, ovvero, più parti del codice
+possono riferirsi alla stessa variabile, e questo complica la programmazione
+multithreading dovendosi preoccupare di meccanismi come il blocco
+sincronizzato o il locking per evitare le race condition tra più parti
+del codice, e non è immediato scrivere del codice concorrenziale sicuro
+e spesso si riscontrano comportamenti indeterminati.
+In un paradigma funzionale si predilogono le variabili immutabili che
+aggirano questo problema riducendo il rischio di scrivere codice
+concorrenziale non sicuro.
+
+Cambiare paradigma non è immediato, un paradigma si può dire che
+definisce il modo di pensare al problema, nella programmazione ad
+oggetti per esempio si definiscono le cosidette classi,
+pensando al problema come oggetti che possono comportarsi in un
+determinato modo attraverso le funzioni definite su di esso.
+Perciò si pensa ad un oggetto che ha un comportamento e che cambia
+il suo stato nel tempo, un modo di sviluppare intuitivo ma non sempre
+ottimale per la risoluzione di problemi. Nella programmazione funzionale
+si cambia prospettiva, ovvero si ha un input, si passa l'input 
+alla funzione e si ottiene la trasformazione dell'input ottenendo
+l'output.
+
+In poche parole un linguaggio funzionale assume che scrivere un
+software complesso sia più facile nel momento in cui il codice ha
+queste proprietà:
+\begin{itemize}
+    \item I dati sono immutabili
+    \item Le funzioni sono pure, ovvero, il risultato di una funzione
+    dipende soltanto dai suoi parametri in input.
+    \item Le funzioni non generano effetti oltre il suo valore restituito.
+\end{itemize}
+
+Con queste proprietà si ha più controllo del flusso del programma,
+anche se non sempre possono essere soddisfatte.
+
+
+
+
+
+
+
+
+
+
+
+
+% che d'altronde è un sistema equivalente alla
+% Turing Machine
