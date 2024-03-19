@@ -1,1 +1,34 @@
 \section{Struttura di un progetto Elixir}
+
+Elixir è un linguaggio moderno, e come ogni linguaggio moderno che
+si rispetti fornisce un tool per la creazione e configurazione di
+progetti, questo tool si chiama \textbf{Mix}.
+È possibile creare un progetto con il comando:
+% \begin{lstlisting}[language=bash]
+% 	echo "Hello, world!"
+% \end{lstlisting}
+
+% \begin{minted}{bash}
+% 	#!/bin/bash
+% 	echo the $# parameter did not destroy pygments syntax highlighting
+% \end{minted}
+
+\begin{lstlisting}[language=bash]
+mix new <nome-progetto>
+\end{lstlisting}
+
+\begin{lstlisting}[language=elixir]
+	mix new <nome-progetto>
+\end{lstlisting}
+
+\begin{lstlisting}[language=elixir, caption={Super fancy code},captionpos=b]
+# A comment
+defmodule Foo do
+    def bar(x) do
+        string = "hello"
+        fc = fn x,y -> x + y end
+        atom = fc.({:imanatom})
+        atom = fc.({:because})
+    end
+end
+\end{lstlisting}

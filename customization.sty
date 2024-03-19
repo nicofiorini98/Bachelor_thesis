@@ -188,23 +188,81 @@
     morecomment=[n]{/*}{*/},
     morecomment=[s][\color{purple}]{:}{\ },
     morestring=[s][\color{orange}]"",
-    commentstyle=\color{commentgreen},
-    keywordstyle=\color{eminence},
-    stringstyle=\color{red},
-	basicstyle=\rmfamily,
-	breaklines,
-	showstringspaces=false,
-	frame=tb
-}
-	
-\lstset{
-    numbers=left,
-    xleftmargin=0em,
+    %   identifierstyle=\color{red}\ttfamily,
+    commentstyle=\color{ipython_green}\ttfamily,
+    stringstyle=\color{ipython_red}\ttfamily,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    %
+    rulecolor=\color{ipython_frame},
     frame=single,
-    framexleftmargin=0em,
-    numberstyle=\small\rmfamily,
-    basicstyle=\small\ttfamily
-    }
+    frameround={t}{t}{t}{t},
+    %framexleftmargin=6mm,
+    framexleftmargin=1.6em,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\tiny\color{halfgray},
+    %
+    %
+    backgroundcolor=\color{ipython_bg},
+    %   extendedchars=true,
+    basicstyle=\scriptsize\ttfamily,
+    keywordstyle=\color{ipython_purple}\ttfamily,
+    emph={forward_diff_process,forward_diff_process_ott},          % Custom highlighting
+    emphstyle=\color{ipython_yellow},    % Custom highlighting style
+    % escapechar=\¢,escapebegin=\color{ipython_green},
+}
+
+\lstdefinelanguage{bash}{
+    %   identifierstyle=\color{red}\ttfamily,
+    commentstyle=\color{ipython_green}\ttfamily,
+    stringstyle=\color{ipython_red}\ttfamily,
+    keepspaces=true,
+    showspaces=false,
+    showstringspaces=false,
+    %
+    rulecolor=\color{ipython_frame},
+    frame=single,
+    frameround={t}{t}{t}{t},
+    %framexleftmargin=6mm,
+    framexleftmargin=1.6em,
+    xleftmargin=2em,
+    numbers=left,
+    numberstyle=\tiny\color{halfgray},
+    %
+    %
+    backgroundcolor=\color{ipython_bg},
+    %   extendedchars=true,
+    basicstyle=\scriptsize\ttfamily,
+    keywordstyle=\color{ipython_purple}\ttfamily,
+    keywordstyle=[2]\color{blue}\ttfamily,
+    keywordstyle=[3]\color{ipython_yellow}\ttfamily,
+    emph={forward_diff_process,forward_diff_process_ott},          % Custom highlighting
+    emphstyle=\color{ipython_yellow},    % Custom highlighting style
+    % escapechar=\¢,escapebegin=\color{ipython_green},
+}
+
+
+% \lstdefinestyle{line}{
+%     numbers=left
+%     xleftmargin=0em,
+%     frame=none,
+%     framexleftmargin=0em,
+%     numberstyle=\small\rmfamily,
+%     basicstyle=\small\ttfamily
+% }
+
+% \lstdefinestyle{noline}{
+%     numbers=none
+%     xleftmargin=0em,
+%     frame=none,
+%     framexleftmargin=0em,
+%     % numberstyle=\small\rmfamily,
+%     basicstyle=\small\ttfamily
+% }
+	
+% \lstset{style=noline}
 
 
 \theoremstyle{definition}
