@@ -45,8 +45,92 @@ Con queste proprietà si ha più controllo del flusso del programma,
 anche se non sempre possono essere soddisfatte.
 
 
+\subsection{Struttura di un progetto Elixir}
 
+Elixir è un linguaggio moderno, e come ogni linguaggio moderno che
+si rispetti fornisce un tool per la creazione e configurazione di
+progetti, questo tool si chiama \textbf{Mix}.
 
+\subsubsection{Il tool Mix}
+È possibile creare un progetto con il comando:
+
+\begin{lstlisting}[language=none]
+mix new <nome-progetto>
+\end{lstlisting}
+
+Verrà creata una struttura per il progetto, e nel progetto saranno
+presenti una cartella \textbf{lib} dove andrà il codice,
+una cartella \textbf{test} per creare degli Unit Test, ma soprattutto
+viene creato un file \textbf{mix.exs} per la configurazione del progetto.
+
+Come sappiamo Elixir fornisce anche un ambiente interattivo (\textbf{iex}) per
+testare il nostro codice, ed è consentito avviare questo ambiente nel
+dominio della nostra applicazione con il comando:
+
+\begin{lstlisting}[language=none]
+iex -S mix 
+\end{lstlisting}
+Si può compilare il progetto con:
+\begin{lstlisting}[language=none]
+mix compile
+\end{lstlisting}
+
+Con Mix possiamo includere e scaricare facilmente anche librerie esterne attraverso
+il package manager.\cite{HexDocs99:online}
+
+\subsubsection{Moduli}
+Elixir organizza il codice in Moduli, che permettono di definire
+le funzioni dentro dei namespace,permettendoci così di separare
+le responsabilità raggruppando le funzioni.
+
+Ci sono varie cose che si possono definire dentro un modulo,
+si possono definire delle \textbf{struct}
+ma cosa più importante si possono definire i cosiddetti 
+\textbf{Behaviour}, un modo per definire un interfaccia Api,
+Elixir fornisce delle astrazioni proprio attraverso questi.
+%TODO menzionare GenServer e Supervisor
+Ciò che si vuole evidenziare ora è che il progetto è definito
+in moduli, ed è il modo che Elixir fornisce per organizzare il
+codice.
+
+% ----------------------------------------------------------------------------
+
+\subsection{Basi dichiarative}
+
+Come già accennato, Elixir adotta un approccio
+dichiarativo nella definizione delle funzioni.
+Questo si contrappone all'approccio imperativo,
+che si concentra su "come posso risolvere questo problema?",
+mentre quello dichiarativo si pone la domanda 
+"come posso definire un problema?".
+
+Nell'esempio \ref{lst:somma_n_cpp} è presentato un approccio
+imperativo al problema "somma dei primi n elementi", mentre
+nell'esempio \ref{lst:somma_n_elixir} è presentato l' approccio dichiarativo
+con Elixir.
+
+\renewcommand\lstlistingname{Esempio}
+
+\begin{lstlisting}[language=cpp, caption={Somma N elementi},captionpos=b,
+	label={lst:somma_n_cpp}]
+int sum_first_n(n){
+  int sum=0;
+    for(int i=1;i++;i<=n){
+      sum+=i;
+    }
+    return sum;
+}
+\end{lstlisting}
+
+\begin{lstlisting}[language=elixir, caption={Somma N elementi},captionpos=b,
+	label={lst:somma_n_elixir}]
+defmodule Sum do
+  def sum_recursive(0), do: 0
+  def sum_recursive(n), do: n + sum_recursive(n - 1)
+end
+\end{lstlisting}
+
+In un approccio imperativo bisogna controllare il flusso
 
 
 
