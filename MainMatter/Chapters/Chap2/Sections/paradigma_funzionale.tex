@@ -1,4 +1,5 @@
 \section{Il paradigma funzionale}
+\renewcommand\lstlistingname{Esempio}
 Come già accennato Elixir è un linguaggio funzionale, dove
 il concetto di funzione ricopre il ruolo di protagonista,
 i dati sono immutabili e il codice è dichiarativo.
@@ -44,12 +45,15 @@ queste proprietà:
 Con queste proprietà si ha più controllo del flusso del programma,
 anche se non sempre possono essere soddisfatte.
 
+%------------------------------------------------------------------
 
 \subsection{Struttura di un progetto Elixir}
 
 Elixir è un linguaggio moderno, e come ogni linguaggio moderno che
 si rispetti fornisce un tool per la creazione e configurazione di
 progetti, questo tool si chiama \textbf{Mix}.
+
+%------------------------------------------------------------------
 
 \subsubsection{Il tool Mix}
 È possibile creare un progetto con il comando:
@@ -58,10 +62,23 @@ progetti, questo tool si chiama \textbf{Mix}.
 mix new <nome-progetto>
 \end{lstlisting}
 
-Verrà creata una struttura per il progetto, e nel progetto saranno
-presenti una cartella \textbf{lib} dove andrà il codice,
-una cartella \textbf{test} per creare degli Unit Test, ma soprattutto
-viene creato un file \textbf{mix.exs} per la configurazione del progetto.
+Verrà creata una struttura per il progetto come nell'esempio \ref{lst:struttura_progetto},
+il codice sarà organizzato nella cartella \textbf{lib}, viene creata una
+cartella \textbf{test}, e il file per la configurazione del progetto \textbf{mix.exs}.
+Da notare che anche la configurazione del progetto avviene tramite funzioni.
+
+\begin{lstlisting}[language=none,captionpos=b,caption={Struttura progetto},label={lst:struttura_progetto}]
+.
+>build
+>deps
+  -->...
+>lib
+  -->example.ex
+mix.exs
+README.md
+>test
+  -->example.exs
+\end{lstlisting}
 
 Come sappiamo Elixir fornisce anche un ambiente interattivo (\textbf{iex}) per
 testare il nostro codice, ed è consentito avviare questo ambiente nel
@@ -79,9 +96,9 @@ Con Mix possiamo includere e scaricare facilmente anche librerie esterne attrave
 il package manager.\cite{HexDocs99:online}
 
 \subsubsection{Moduli}
-Elixir organizza il codice in Moduli, che permettono di definire
-le funzioni dentro dei namespace,permettendoci così di separare
-le responsabilità raggruppando le funzioni.
+Elixir organizza il codice in Moduli, permettendo di definire
+le funzioni dentro dei namespace, così da separare
+le responsabilità delle funzioni.
 
 Ci sono varie cose che si possono definire dentro un modulo,
 si possono definire delle \textbf{struct}
@@ -90,7 +107,7 @@ ma cosa più importante si possono definire i cosiddetti
 Elixir fornisce delle astrazioni proprio attraverso questi.
 %TODO menzionare GenServer e Supervisor
 Ciò che si vuole evidenziare ora è che il progetto è definito
-in moduli, ed è il modo che Elixir fornisce per organizzare il
+in moduli, il modo che Elixir fornisce per organizzare il
 codice.
 
 % ----------------------------------------------------------------------------
@@ -109,7 +126,6 @@ imperativo al problema "somma dei primi n elementi", mentre
 nell'esempio \ref{lst:somma_n_elixir} è presentato l' approccio dichiarativo
 con Elixir.
 
-\renewcommand\lstlistingname{Esempio}
 
 \begin{lstlisting}[language=cpp, caption={Somma N elementi},captionpos=b,
 	label={lst:somma_n_cpp}]
@@ -130,7 +146,37 @@ defmodule Sum do
 end
 \end{lstlisting}
 
-In un approccio imperativo bisogna controllare il flusso
+In particolare questo approccio è rafforzato tramite il meccanismo
+del \textbf{Pattern Matching}, infatti in Elixir l'operatore $=$,
+non è un operatore di assegnazione, ma è comparabile
+all'equivalente algebrico.
+Quest'operatore ci permette di scrivere dell'equazioni
+che condizionano il flusso del codice.
+Questo è molto utile per l'approccio
+dichiarativo, infatti possiamo definire più corpi della stessa funzione
+ed Elixir capisce quale funzione invocare in base
+al valore dei suoi parametri attraverso questo meccanismo,
+è già stato utilizzato implicitamente nell'esempio \ref{lst:somma_n_elixir},
+dove viene invocata la funzione "sum\_recursive(0)" quando
+il valore dell'argomento vale 0, altrimenti chiamerà quello
+con l'argomento "n" assegnando il valore dell'argomento alla variabile n.
+
+Elixir cerca di assegnare il valore a destra dell'equazione
+al valore di sinistra, tenta di fare un assegnazione ove possibile,
+questo fa in modo di poter usare quest'operatore per poter
+scomporre un dato, un esempio può essere usatto usando l'ambiente
+interattivo \textit{iex}
+
+\begin{lstlisting}[language=elixir, caption={Pattern Matching},captionpos=b,
+	label={lst:pattern_matching}]
+# Lists
+iex> list = [1, 2, 3]
+[1, 2, 3]
+iex> [1, 2, 3] = list
+[1, 2, 3]
+iex> [] = list
+** (MatchError) no match of right hand side value: [1, 2, 3]
+\end{lstlisting}
 
 
 
