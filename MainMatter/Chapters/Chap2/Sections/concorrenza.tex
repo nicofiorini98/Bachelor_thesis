@@ -32,9 +32,9 @@ stack ed il proprio heap.
 
 La concorrenza gioca un ruolo chiave per un software
 che vuole essere altamente responsivo.
-La concorrenza è raggiunta nella piattaforma Erlang
-con il concetto di Processo, per processo non si intende
-il processo del sistema operativo, ma processo della
+La concorrenza fa uso dei cosiddetti processi leggeri
+nella piattaforma Erlang, non sono processi del 
+sistema operativo, ma processi della
 VM, chiamato processo e non thread in quanto non
 condividono memoria tra di loro e sono completamente
 isolati.
@@ -45,19 +45,64 @@ rimanere in attesa il client. Quello che si vuole è
 gestirli parallelamente il più possibile sfruttando
 più risorse della Cpu disponibile.
 Quello che fa la macchina virtuale per noi è permetterci
-la scalabilità, più richieste allora più risorse da allocare.
+la scalabilità,più richieste allora più risorse da allocare.
 
-Siccome il processo è isolato, un errore in una richiesta
-ad esempio può essere localizzato senza avere impatto
+Inoltre, siccome il processo è isolato, un errore in una richiesta
+può essere localizzato senza avere impatto
 sul resto del sistema, così creando anche un sistema robusto
 agli errori.
 
-In Beam due processi sono eseguiti concorrenzialmente e
-se sono disponibili due Cpu core, forse sono eseguiti anche
-in parallelo, la gestione della concorrenza è gestita
-dalla macchina virtuale come in figura \ref{fig:concorrenza_beam}
-in un computer dual core.
+Un processo appena creato occupa in memoria 326 words \cite{ErlangPr21:online},
+quindi in una macchina a 64 bit occupa 2608 byte.
+Lo si può vedere in Elixir facilmente nell'esempio 
+% \ref{lst:memoryoneprocess}
 
+\begin{lstlisting}[language=elixir, caption={Memoria in un processo},captionpos=b,
+	label={lst:memoryoneprocess}]
+defmodule Examples.Memory do
+  def mypid do
+    receive do
+      :stop -> :exit
+    end
+  end
+ 
+  def benchmark do
+    pid = spawn(fn -> mypid() end)
+    {_,byte_used} = :erlang.process_info(pid,:memory)
+    IO.puts("La memoria usata dal processo e': #{byte_used} byte")
+    send pid, :stop
+  end
+end
+\end{lstlisting}
+
+Infatti l'output ottenuto dall'esempio \ref{lst:memoryoneprocess}
+\begin{lstlisting}[language=none]
+iex> Examples.Memory.benchmark
+La memoria usata dal processo e': 2640 byte
+:stop
+\end{lstlisting}
+	
+Si nota dall'output dell'esempio che la memoria utilizzata
+è leggermente superiore della memoria minima dichiarata,
+infatti il processo non fa nulla di particolare oltre
+ad aspettare il messaggio di ":stop".
+È da notare che è proprio questa leggerezza nei processi che
+permette al linguaggio di essere orientato alla concorrenza,
+e poter usare i processi con più leggerezza rispetto
+ad altri meccanismi di altri linguaggi che usano i thread,
+Un altro punto da notare è che si può migliorare significativamente
+la reattività del programma ma non l'efficienza totale del
+sistema, infatti non tutti i processi
+sono eseguiti in parallelo, infatti in una macchina con quattro
+processori non si possono eseguire più di 4 processi per volta
+ed in un normale software Elixir è normale avere migliaia di
+processi che lavorano.
+
+Facendo un esempio con una Cpu dual-core,
+i processi vengono eseguiti concorrenzialmente e gestiti
+dagli Scheduler della VM,
+in figura \ref{fig:concorrenza_beam} è mostrato come
+la VM gestisce i processi di default.
 
 \begin{figure}[!htp]
     \centering
@@ -65,11 +110,6 @@ in un computer dual core.
 	\caption{Concorrenza nella VM Beam \cite{elixirInAction5}}
   	\label{fig:concorrenza_beam}
 \end{figure}
-
-In Beam i processi sono entità leggere e sono gestiti
-dalla macchina virtuale usando il proprio scheduler.
-In dettaglio, la VM alloca di default uno scheduler per ogni
-core logico disponibile, 
 
 
 %--------------------------------------------------------------
