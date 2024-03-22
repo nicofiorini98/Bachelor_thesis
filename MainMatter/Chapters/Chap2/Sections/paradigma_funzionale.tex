@@ -162,9 +162,10 @@ il valore dell'argomento vale 0, altrimenti chiamerà quello
 con l'argomento "n" assegnando il valore dell'argomento alla variabile n.
 
 Elixir cerca di assegnare il valore a destra dell'equazione
-al valore di sinistra, tenta di fare un assegnazione ove possibile,
-questo fa in modo di poter usare quest'operatore per poter
-scomporre un dato, un esempio può essere usatto usando l'ambiente
+al valore di sinistra cercando di risolvere l'equazione tentando
+di fare un assegnazione dove possibile.
+Questo ci permette di usare quest'operatore per poter
+scomporre un dato, un esempio può essere usato usando l'ambiente
 interattivo \textit{iex}
 
 \begin{lstlisting}[language=elixir, caption={Pattern Matching},captionpos=b,
@@ -176,6 +177,10 @@ iex> [1, 2, 3] = list
 [1, 2, 3]
 iex> [] = list
 ** (MatchError) no match of right hand side value: [1, 2, 3]
+iex> [1 | tail] = list
+[1,2,3]
+iex> tail
+[2,3]
 \end{lstlisting}
 
 

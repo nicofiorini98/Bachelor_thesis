@@ -63,6 +63,7 @@ defmodule Examples.Memory do
   def mypid do
     receive do
       :stop -> :exit
+      _ -> mypid()
     end
   end
  
@@ -93,7 +94,7 @@ ad altri meccanismi di altri linguaggi che usano i thread,
 Un altro punto da notare è che si può migliorare significativamente
 la reattività del programma ma non l'efficienza totale del
 sistema, infatti non tutti i processi
-sono eseguiti in parallelo, infatti in una macchina con quattro
+sono eseguiti in parallelo, quindi in una macchina con quattro
 processori non si possono eseguire più di 4 processi per volta
 ed in un normale software Elixir è normale avere migliaia di
 processi che lavorano.
@@ -117,25 +118,70 @@ la VM gestisce i processi di default.
 \subsection{Concorrenza basata su attori}
 
 Elixir usa un modello di concorrenza basato su attori,
-Gli attori sono entità di elaborazione indipendenti
+gli attori sono entità di elaborazione indipendenti
 che eseguono operazioni in modo asincrono, questi attori
-non sono altri che  processi che vengono identificati
-attraverso un \textbf{PID} univoco.
-Gli attori sono isolati l'uno dall'altro e
+non sono altro che processi che vengono identificati
+attraverso un \textbf{PID} univoco. Come già detto
+sono isolati l'uno dall'altro e
 comunicano solo attraverso lo scambio di messaggi,
 questo scambio avviene attraverso
 dei canali di comunicazione detti \textbf{"mailbox"}.
 Ogni processo ha una propria mailbox dove avviene la
-ricezione del messaggio.
+ricezione del messaggio da parte di altri processi.
 
 Conoscendo il PID di un processo può avvenire la comunicazione
-attraverso la primitiva fornita dal linguaggio.
+attraverso la primitiva fornita dal linguaggio \textbf{send/2}
+che permette di inviare un messaggio ad un processo
+come avviene nell'esempio \ref{lst:memoryoneprocess}, dove
+il processo principale crea un processo che rimane in ascolto
+tramite il blocco \textbf{receive/1},
+fin quando non riceve il messaggio di \textbf{:stop} e il processo
+viente terminato.
 
-Un processo può essere creato tramite la primitiva \textbf{spawn/1},
+Se non ci sono messaggi nella mailbox, il processo aspetta fino a
+quando non arriva un messaggio, in particolare, 
+nell'esempio tutti i messaggi che
+non siano :stop, verranno ignorati continuando ad ascoltare altri
+messaggi.
 
-\begin{lstlisting}[language=elixir, caption={Creazione processo},captionpos=b,
-	label={lst:creazione_processo}]
-iex(1)> pid = spawn(fn -> IO.puts("Hello") end)
-Hello
-#PID<0.114.0>
+\subsubsection{Process Linking}
+
+I processi sono isolati, ma se creo un processo con spawn/1
+spesso voglio sapere se va in errore e magari
+propagare l'errore, per questo
+in Elixir c'è il concetto di linking, ovvero si può legare un
+processo ad un altro, in modo che se uno va in errore,
+i processi legati vengono notificati con un messaggio propagando l'errore
+ai processi legati.
+
+Spesso i processi vengono legati ad un Supervisor, che
+lascerà andare in errore i processi figli, e si occuperà
+semplicemente di riavviarli seguendo una strategia scelta.
+Questa è la filosofia "Let it Crash"
+di Erlang, che si contrappone alla gestione delle eccezioni
+di altri linguaggi. Si veda l'esempio \ref{lst:processlinking}
+
+\begin{lstlisting}[language=elixir, caption={Process linking},captionpos=b
+	label={lst:processlinking}]
+iex>spawn(fn -> raise "oops" end)
+#PID<0.58.0>
+	
+[error] Process #PID<0.58.00> raised an exception
+** (RuntimeError) oops
+	(stdlib) erl_eval.erl:668: :erl_eval.do_apply/6
 \end{lstlisting}
+
+
+% \subsubsection{Process Monitoring}
+% Se invece non si vuole propagare l'errore ma semplicemente
+% riceverne una notifica si può monitorare un processo
+
+
+% Un processo può essere creato tramite la primitiva \textbf{spawn/1},
+
+% \begin{lstlisting}[language=elixir, caption={Creazione processo},captionpos=b,
+% 	label={lst:creazione_processo}]
+% iex(1)> pid = spawn(fn -> IO.puts("Hello") end)
+% Hello
+% #PID<0.114.0>
+% \end{lstlisting}
