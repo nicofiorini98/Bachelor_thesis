@@ -146,13 +146,12 @@ messaggi.
 
 \subsubsection{Process Linking}
 
-I processi sono isolati, ma se creo un processo con spawn/1
-spesso voglio sapere se va in errore e magari
-propagare l'errore, per questo
-in Elixir c'è il concetto di linking, ovvero si può legare un
-processo ad un altro, in modo che se uno va in errore,
-i processi legati vengono notificati con un messaggio propagando l'errore
-ai processi legati.
+I processi sono isolati, ma si può legare un processo
+al processo chiamante tramite un operazione di Process linking,
+questo per sapere se il processo va in errore
+oppure termina per un comportamento imprevisto,
+legando i processi si può propagare l'errore nel caso
+uno dei due processi non ha senso di esistere preso da solo.
 
 Spesso i processi vengono legati ad un Supervisor, che
 lascerà andare in errore i processi figli, e si occuperà
@@ -161,7 +160,7 @@ Questa è la filosofia "Let it Crash"
 di Erlang, che si contrappone alla gestione delle eccezioni
 di altri linguaggi. Si veda l'esempio \ref{lst:processlinking}
 
-\begin{lstlisting}[language=elixir, caption={Process linking},captionpos=b
+\begin{lstlisting}[language=elixir, caption={Process linking},captionpos=b,
 	label={lst:processlinking}]
 iex>spawn(fn -> raise "oops" end)
 #PID<0.58.0>
