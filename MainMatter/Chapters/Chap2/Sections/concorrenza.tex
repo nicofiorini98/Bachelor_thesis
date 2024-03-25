@@ -168,19 +168,29 @@ iex>spawn(fn -> raise "oops" end)
 [error] Process #PID<0.58.00> raised an exception
 ** (RuntimeError) oops
 	(stdlib) erl_eval.erl:668: :erl_eval.do_apply/6
+
+iex(2)spawn_link(fn -> raise "ooops" end)
+
+17:37:50.425 [error] Process #PID<0.113.0> raised an exception
+** (RuntimeError) ooops
+** (EXIT from #PID<0.110.0>) shell process 
+** exited with reason: {%RuntimeError{message: "ooops"}, []}
+
+iex(2)
 \end{lstlisting}
 
+Notiamo nell'esempio \ref{lst:processlinking} che con il comando
+la funzione spawn\_link/1 il processo va in errore e propaga
+l'errore all'ambiente interattivo iex, riavviando anche
+l'ambiente iex.
 
-% \subsubsection{Process Monitoring}
-% Se invece non si vuole propagare l'errore ma semplicemente
-% riceverne una notifica si può monitorare un processo
-
-
-% Un processo può essere creato tramite la primitiva \textbf{spawn/1},
-
-% \begin{lstlisting}[language=elixir, caption={Creazione processo},captionpos=b,
-% 	label={lst:creazione_processo}]
-% iex(1)> pid = spawn(fn -> IO.puts("Hello") end)
-% Hello
-% #PID<0.114.0>
-% \end{lstlisting}
+Si nota in conclusione al paragrafo che è possibile
+gestire migliaia di processi molto facilmente senza
+incrementare in modo considerevole le risorse in memoria grazie
+ai processi leggeri, permettendo
+di sviluppare un software orientanto alla concorrenza,
+tutto è facilitato dall'isolamento di ogni processo che 
+permette di non preoccuparsi di meccanismi di locking e sincronizzazine.
+Elixir permette di non preoccuparci di come scalare
+le risorse hardware, potendo dare responsabilità ad altri
+processi creando più flussi di esecuzione.

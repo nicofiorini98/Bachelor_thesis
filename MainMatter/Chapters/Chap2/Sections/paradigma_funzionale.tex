@@ -183,12 +183,84 @@ iex> tail
 [2,3]
 \end{lstlisting}
 
+%--------------------------------------------------------------------------
 
+\subsection{Transizione al funzionale - Immutabilità dei dati}
 
+Cambiare paradigma può essere difficoltoso, bisogna
+cambiare prospettiva, ma con le giuste intuizioni
+può risultare semplice. Per fare una transizione al funzionale
+bisogna capire soprattuto qual'è la differenza rispetto ad un
+linguaggio basato sugli stati.
 
+Elixir non ha oggetti, il linguaggio ha un forte focus sull'immutabilità.
+In Elixir trasformiamo dati piuttosto che mutarli, infatti da questo
+punto di vista probabilmente è più naturale il paradigma funzionale
+piuttosto che un procedurale, ad esempio in un linguaggio
+procedurale possiamo scrivere:
 
+\begin{lstlisting}[language=cpp]
+my_array = [1,2,3]
+do_something_with_array(my_array)
+print(my_array)
+\end{lstlisting}
 
+Ci potremmo aspettare che la stampa dell'array sia [1,2,3] quando in realtà
+l'output dipende da cosa fa la funzione. Mentre in Elixir questa cosa
+non è implicita, ma l'assegnazione deve essere sempre esplicita come
+segue:
 
+\begin{lstlisting}[language=elixir]
+my_list = [1,2,3]
+my_list = do_something_with_array(my_list)
+IO.inspect(my_list)
+\end{lstlisting}
 
-% che d'altronde è un sistema equivalente alla
-% Turing Machine
+Se my\_list non viene riassegnata, my\_list non cambia.
+Il problema può arrivare nel momento in cui ci serve uno stato
+da condividere, una semplice variabile globale non esiste
+in Elixir, e per mantenere uno stato dobbiamo
+affidarci ad un altro processo che lo mantiene per noi,
+ed Elixir almeno per questo ci da delle astrazioni
+a cui fare affidamento come il Modulo \textbf{Agent} o il
+\textbf{GenServer} che verranno trattati in seguito.
+
+%--------------------------------------------------------------------------
+\subsection{Conseguenze sulle prestazioni dell'immutabilità}
+
+L'immutabilità ci consente di avere un controllo maggiore
+sul flusso del codice, questo però può portare ad un'inefficienza
+dovendo sempre copiare dati, inoltre si può pensare che si creano
+molti dati non più utilizzati da liberare in memoria con il Garbage collector.
+Sfruttando questa proprietà però si possono limitare i danni.
+
+Elixir sa che i dati sono immutabili, e può riusarli in parte o per
+intero quando si creano nuove strutture.
+Il seguente esempio mostra come Elixir ottimizza la creazione di
+nuovi dati:
+
+\begin{lstlisting}[language=elixir]
+iex> lista1 = [ 3, 2, 1 ]
+[3, 2, 1]
+iex> lista2 = [ 4 | lista1 ]
+[4, 3, 2, 1]
+\end{lstlisting}
+
+La lista2 infatti è creata usando la lista1 sapendo che non
+cambierà mai durante il flusso di esecuzione, quindi mette
+semplicimente in coda la lista1.
+
+\subsubsection{Garbage Collection}
+Un altro aspetto che può creare dubbi sul copiare dati, è che
+si lasciano spesso vecchi dati non più utilizzati da dover
+pulire con il Garbage Collector.
+
+Scrivendo codice Elixir però ci rendiamo subito conto
+che ci porta a sviluppare codice con migliaia di processi leggeri,
+ed ogni processo ha il proprio heap. I dati nell'applicazione quindi
+sono suddivisi nei processi, e ogni heap è molto piccolo rendendo
+il garbage collector molto veloce. Se un processo termina prima che
+il suo heap diventi pieno, tutti i suoi dati vengono eliminati, senza necessità
+di liberare la memoria rendendo il garbage collector
+efficiente. \cite{programming_elixir_immutability}
+
