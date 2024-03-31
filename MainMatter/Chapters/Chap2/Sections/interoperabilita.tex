@@ -1,0 +1,159 @@
+\section{Integrazione con codice esterno}
+Elixir compilato sulla Erlang VM (BEAM) offre completa Interoperabilità
+con il codice erlang, avendo a disposizione tutta la gamma di librerie
+già sviluppate per Erlang, per questo molte librerie non sono disponibili
+per Elixir potendo usare quelle già ben testate sulla piattaforma Erlang.
+Non tutto può essere implementato in modo efficiente su questa piattaforma
+tramite Elixir o Erlang, basti pensare che l'immutabilità dei dati
+porta molti vantaggi per lo sviluppo concorrenziale, ma porta altri
+svantaggi. Nella seguente lista vengono messi in evidenza alcune
+lacune che presenta la Erlang VM.
+
+\begin{itemize}
+	\item \textbf{Matematica avanzata}: La VM non è stata progettata per operazioni
+	intensive di calcolo numerico. Se l'applicazione dipende dal calcolo di
+	statistiche si possono riscontrare delle limitazioni.
+	\item \textbf{Soluzioni algoritmiche tramite matrici}: L'implementazione
+	nativa di matrici in Elixir usa liste di liste, che non è una rappresentazione
+	efficiente delle matrici multidimensionali. Inoltre la mancanza di mutabilità
+	porta a fare una copie di matrici anche grandi per semplici operazioni.
+	\item \textbf{Command Line Applications}: La VM impiega circa 0.3 secondi
+	per l'avvio e lo spegnimento anche per l'hardware moderno, dopotutto Erlang
+	è stato progettato per sistemi a lungo termine, ciò non porta ad essere
+	la scelta ottimale per una CLI.
+\end{itemize}
+
+Ci possono essere un sacco di insiemi di problemi in cui Elixir
+non è la soluzione migliore, ma può risultare utile comunque
+usare Elixir e risolvere sotto problemi con un codice esterno
+scritto in un altro linguaggio.
+In particolare Elixir può comunicare con altri linguaggi
+in 3 modi diversi:
+
+\begin{itemize}
+	\item NIF (Native implemented functions): L'applicazione può condividere lo stesso
+	spazio degli indirizzi di memoria.
+	Una NIF è una funzione scritta in C/C++, viene compilata
+	come libreria condivisa e caricata all'avvio dell'applicazione.
+	\item Ports: Elixir può invocare processi esterni alla macchina
+	virtuale, è una forma di Interprocess communication (IPC).
+	\item Erlang Distribution Protocol: Si può comunicare con
+	processi esterni anche su macchine differenti
+	attraverso il protocollo di distribuzione fornito per distribuire
+	un applicazione su più nodi scalando orizzontalmente un sistema.
+\end{itemize}
+
+
+%------------------------  NIF ---------------------------------
+
+\subsection{Interoperabilità tramite NIF}
+
+Le funzioni native NIF, permettono di caricare codice esterno
+nello stesso spazio di memoria della Erlang VM. 
+Questa strategia di interoperabilità porta a dei benefici
+sulle performance elevati per alcune tipologie di calcolo
+come quello matematico.
+Erlang fornisce un interfaccia \cite{Erlanger73:online}
+per poter scrivere funzioni C
+che possono essere chiamate direttamente da Elixir/Erlang.
+
+Queste funzioni C devono essere compilate come librerie condivise,
+shared object(.so) in linux. Viene riportato
+nell' esempio \ref{lst:example_nif} il codice NIF
+che stampa "Hello from C"\cite{adoptingElixirchap7pag126}.
+
+\begin{lstlisting}[language=cpp,captionpos=b,
+	caption={Funzione Nif},label={lst:example_nif}]
+#include "string.h"
+#include "erl_nif.h"
+
+static ERL_NIF_TERM hello(ErlNifEnv* env,int argc,
+                          const ERL_NIF_TERM argv[]) {
+  ErlNifBinary *output_binary;
+  enif_alloc_binary(sizeof "Hello from C", output_binary);
+  strcpy(output_binary->data, "Hello from C");
+  return enif_make_binary(env, output_binary);
+}
+
+static ErlNifFunc nif_funcs[] = {
+  {"hello", 0, hello},
+};
+
+ERL_NIF_INIT(Elixir.ElixirNif, nif_funcs, NULL, NULL, NULL, NULL)
+	
+\end{lstlisting}
+
+Si può compilare con il compilatore \textbf{gcc}
+con il seguente comando:
+
+\begin{lstlisting}[language=none]
+gcc -o <destination-directory>/hello.so -shared -fpic \\
+  -I $ERL_ROOT/usr/include <file-directory>/hello.c
+\end{lstlisting}
+
+Una volta compilata la libreria si può caricare all'interno del
+modulo nel quale si vuole usare la funzione come
+nell'esempio \ref{lst:elixir_nif}.
+
+\begin{lstlisting}[language=elixir, caption={Caricamento NIF},
+	captionpos=b,label={lst:elixir_nif}]
+defmodule ElixirNif do
+  @on_load :load_nif
+
+  def load_nif do
+	:ok = :erlang.load_nif(String.to_charlist("priv/elixir_nif"), 0)
+  end
+
+  def hello do
+    "Hello from Elixir"
+  end
+end
+\end{lstlisting}
+
+L'annotazione @on\_load :load\_nif dice alla VM di eseguire load\_nif/0
+all'avvio dell'applicazione.
+La funzione hello necessita di essere ridefinita anche in Elixir,
+così da permettere che la chiamata non fallisca nonostante qualche
+eventuale errore nel caricamento della NIF.
+
+Nonostante è uno dei metodi più efficienti per eseguire codice C/C++,
+questo metodo ha degli svantaggi \cite{Erlanger73:online}:
+
+\begin{itemize}
+	\item Una funzione nativa che va in crash, farà andare in crash l'intera
+	VM, per questo è sconsigliato usare questo metodo se non strettamente necessario,
+	questo rischio va contro la filosofia di Erlang nella costruzione di sistemi
+	fault-tolerant.
+	\item Una funzione nativa implementata erroneamente può causare
+	un'inconsistenza dello stato interno della VM, che può portare 
+	al crash della VM o a comportamenti imprevisti della VM in 
+	qualsiasi momento dopo la chiamata alla funzione nativa.
+	\item Una funzione nativa che viene eseguita a lungo degrada la
+	responsività della VM e può portare a comportamenti strani, che possono
+	portare a un utilizzo della memoria eccessivo.
+\end{itemize}
+%------------------------ PORT -------------------
+
+\subsection{Interoperabilità con Port}
+
+Il meccanismo Port è un alternativa più sicura per
+integrare codice esterno. Ogni Port comunica con un
+processo esterno del sistema operativo.
+In questo caso se il Port termina, il codice Elixir
+viene notificato con un messaggio e può agire di conseguenza
+continuando permettendo di avere un interazione robusta
+in confronto alle NIF. Per esempio un Segmentation fault
+in un processo che comunica tramite Port non porta alla
+terminazinoe della VM. Per questi motivi prima di integrare
+codice esterno tramite NIF conviene sempre prendere in considerazione
+il meccanismo Port prima, per non perdere i benefici dati dalla
+piattaforma Erlang.
+
+\subsubsection{La libreria ErlPort}
+Un caso di particolare interesse può essere la comunicazione
+tra Elixir e python, per consentire ai programmatore di Elixir
+di trarre vantaggio dalla vasta libreria offerta dalla grande
+community degli sviluppatori di Python.
+Proprio in quest'ambito la libreria \textbf{ErlPort} ci consente
+di avviare istanze python da Elixir, una libreria open source
+costruita grazie al meccanismo Port.

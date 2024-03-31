@@ -10,12 +10,12 @@ un sistema formale definito da Alonzo Church nel 1936, sviluppato
 per definire formalmente le funzioni e il loro calcolo.
 
 In un paradigma basato su stati come la programmazione ad oggetti
-spesso si hanno variabili condivise mutabili, ovvero, più parti del codice
-possono riferirsi alla stessa variabile, e questo complica la programmazione
+spesso si hanno variabili condivise mutabili, di conseguenza più parti del codice
+possono riferirsi alla stessa variabile, complicando la programmazione
 multithreading dovendosi preoccupare di meccanismi come il blocco
 sincronizzato o il locking per evitare le race condition tra più parti
-del codice, e non è immediato scrivere del codice concorrenziale sicuro
-e spesso si riscontrano comportamenti indeterminati.
+del codice, così non è immediato scrivere del codice concorrenziale sicuro
+riscontrando possibili comportamenti indeterminati se non gestiti bene.
 In un paradigma funzionale si predilogono le variabili immutabili che
 aggirano questo problema riducendo il rischio di scrivere codice
 concorrenziale non sicuro.
@@ -23,14 +23,13 @@ concorrenziale non sicuro.
 Cambiare paradigma non è immediato, un paradigma si può dire che
 definisce il modo di pensare al problema, nella programmazione ad
 oggetti per esempio si definiscono le cosidette classi,
-pensando al problema come oggetti che possono comportarsi in un
-determinato modo attraverso le funzioni definite su di esso.
-Perciò si pensa ad un oggetto che ha un comportamento e che cambia
-il suo stato nel tempo, un modo di sviluppare intuitivo ma non sempre
+pensando al problema come oggetti che hanno un determinato comportamento,
+e cambiano stato nel tempo.
+Questo può essere un modo di sviluppare intuitivo ma non sempre
 ottimale per la risoluzione di problemi. Nella programmazione funzionale
 si cambia prospettiva, ovvero si ha un input, si passa l'input 
 alla funzione e si ottiene la trasformazione dell'input ottenendo
-l'output.
+l'output, quindi si trasformano dati, non si mutano.
 
 In poche parole un linguaggio funzionale assume che scrivere un
 software complesso sia più facile nel momento in cui il codice ha
@@ -43,7 +42,8 @@ queste proprietà:
 \end{itemize}
 
 Con queste proprietà si ha più controllo del flusso del programma,
-anche se non sempre possono essere soddisfatte.
+anche se non sempre possono essere soddisfatte anche in un linguaggio
+funzionale.
 
 %------------------------------------------------------------------
 
@@ -82,18 +82,19 @@ README.md
 
 Come sappiamo Elixir fornisce anche un ambiente interattivo (\textbf{iex}) per
 testare il nostro codice, ed è consentito avviare questo ambiente nel
-dominio della nostra applicazione con il comando:
+contesto della nostra applicazione con il comando:
 
 \begin{lstlisting}[language=none]
 iex -S mix 
 \end{lstlisting}
-Si può compilare il progetto con:
-\begin{lstlisting}[language=none]
-mix compile
-\end{lstlisting}
+% Si può compilare il progetto con:
+% \begin{lstlisting}[language=none]
+% mix compile
+% \end{lstlisting}
 
 Con Mix possiamo includere e scaricare facilmente anche librerie esterne attraverso
-il package manager.\cite{HexDocs99:online}
+il package manager definendo la dipendenza nel file di configurazione
+mix.exs.\cite{HexDocs99:online}
 
 \subsubsection{Moduli}
 Elixir organizza il codice in Moduli, permettendo di definire
@@ -104,11 +105,13 @@ Ci sono varie cose che si possono definire dentro un modulo,
 si possono definire delle \textbf{struct}
 ma cosa più importante si possono definire i cosiddetti 
 \textbf{Behaviour}, un modo per definire un interfaccia Api,
-Elixir fornisce delle astrazioni proprio attraverso questi.
+Elixir fornisce delle astrazioni proprio attraverso questi,
+come il GenServer ed il Supervisor.
 %TODO menzionare GenServer e Supervisor
 Ciò che si vuole evidenziare ora è che il progetto è definito
 in moduli, il modo che Elixir fornisce per organizzare il
-codice.
+codice separando in namespace e poter dare delle particolari
+caratteristiche alle funzioni.
 
 % ----------------------------------------------------------------------------
 
@@ -122,9 +125,9 @@ mentre quello dichiarativo si pone la domanda
 "come posso definire un problema?".
 
 Nell'esempio \ref{lst:somma_n_cpp} è presentato un approccio
-imperativo al problema "somma dei primi n elementi", mentre
-nell'esempio \ref{lst:somma_n_elixir} è presentato l' approccio dichiarativo
-con Elixir.
+imperativo al problema "somma dei primi n elementi" nel linguaggio C,
+mentre nell'esempio \ref{lst:somma_n_elixir} è presentato 
+l' approccio dichiarativo con Elixir.
 
 
 \begin{lstlisting}[language=cpp, caption={Somma N elementi},captionpos=b,
@@ -146,14 +149,18 @@ defmodule Sum do
 end
 \end{lstlisting}
 
-In particolare questo approccio è rafforzato tramite il meccanismo
+\subsubsection{Pattern matching}
+
+L'approccio dichiarativo è rafforzato tramite il meccanismo
 del \textbf{Pattern Matching}, infatti in Elixir l'operatore $=$,
-non è un operatore di assegnazione, ma è comparabile
-all'equivalente algebrico.
+non è un operatore di assegnazione come nei più comuni linguaggi,
+ma è comparabile all'equivalente algebrico.
 Quest'operatore ci permette di scrivere dell'equazioni
-che condizionano il flusso del codice.
+che condizionano il flusso del codice, il controllo del flusso
+in questo linguaggio è pesantemente influenzato da questo meccanismo,
+infatti si vedono i costrutti \textit{if - else} molto raramente.
 Questo è molto utile per l'approccio
-dichiarativo, infatti possiamo definire più corpi della stessa funzione
+dichiarativo, infatti possiamo definire più corpi della stessa funzione,
 ed Elixir capisce quale funzione invocare in base
 al valore dei suoi parametri attraverso questo meccanismo,
 è già stato utilizzato implicitamente nell'esempio \ref{lst:somma_n_elixir},
@@ -162,11 +169,11 @@ il valore dell'argomento vale 0, altrimenti chiamerà quello
 con l'argomento "n" assegnando il valore dell'argomento alla variabile n.
 
 Elixir cerca di assegnare il valore a destra dell'equazione
-al valore di sinistra cercando di risolvere l'equazione tentando
-di fare un assegnazione dove possibile.
+al valore di sinistra cercando di risolvere l'equazione, tenta
+di fare un assegnazione dove possibile per risolvere l'equazione.
 Questo ci permette di usare quest'operatore per poter
-scomporre un dato, un esempio può essere usato usando l'ambiente
-interattivo \textit{iex}
+scomporre un dato, viene mostrato nelll'esempio\ref{pattern_matching}
+tramite l'ambiente interattivo \textit{iex}
 
 \begin{lstlisting}[language=elixir, caption={Pattern Matching},captionpos=b,
 	label={lst:pattern_matching}]
@@ -185,13 +192,13 @@ iex> tail
 
 %--------------------------------------------------------------------------
 
-\subsection{Transizione al funzionale - Immutabilità dei dati}
+\subsection{Transizione al funzionale}
 
 Cambiare paradigma può essere difficoltoso, bisogna
 cambiare prospettiva, ma con le giuste intuizioni
 può risultare semplice. Per fare una transizione al funzionale
 bisogna capire soprattuto qual'è la differenza rispetto ad un
-linguaggio basato sugli stati.
+linguaggio basato a stati.
 
 Elixir non ha oggetti, il linguaggio ha un forte focus sull'immutabilità.
 In Elixir trasformiamo dati piuttosto che mutarli, infatti da questo
@@ -206,9 +213,8 @@ print(my_array)
 \end{lstlisting}
 
 Ci potremmo aspettare che la stampa dell'array sia [1,2,3] quando in realtà
-l'output dipende da cosa fa la funzione. Mentre in Elixir questa cosa
-non è implicita, ma l'assegnazione deve essere sempre esplicita come
-segue:
+l'output dipende da cosa fa la funzione. In Elixir non è implicito,
+ma l'assegnazione deve essere sempre esplicita come segue:
 
 \begin{lstlisting}[language=elixir]
 my_list = [1,2,3]
@@ -216,8 +222,9 @@ my_list = do_something_with_array(my_list)
 IO.inspect(my_list)
 \end{lstlisting}
 
-Se my\_list non viene riassegnata, my\_list non cambia.
-Il problema può arrivare nel momento in cui ci serve uno stato
+Se \textit{my\_list} non viene riassegnata, \textit{my\_list} non cambia.
+
+Il problema arriva nel momento in cui ci serve uno stato
 da condividere, una semplice variabile globale non esiste
 in Elixir, e per mantenere uno stato dobbiamo
 affidarci ad un altro processo che lo mantiene per noi,
@@ -229,12 +236,14 @@ a cui fare affidamento come il Modulo \textbf{Agent} o il
 \subsection{Conseguenze sulle prestazioni dell'immutabilità}
 
 L'immutabilità ci consente di avere un controllo maggiore
-sul flusso del codice, questo però può portare ad un'inefficienza
-dovendo sempre copiare dati, inoltre si può pensare che si creano
-molti dati non più utilizzati da liberare in memoria con il Garbage collector.
-Sfruttando questa proprietà però si possono limitare i danni.
+sul flusso del codice, si può pensare che può essere inefficiente
+e dovendo sempre copiare dati, inoltre si può pensare che si creano
+molti dati non più utilizzati da liberare in memoria con il Garbage collector
+portando anche il garbage collector ad essere inefficiente.
+Questo è vero solo in parte, infatti Elixir sfrutta la poprietà
+dell'immutabilità per limitare l'inefficienza.
 
-Elixir sa che i dati sono immutabili, e può riusarli in parte o per
+Elixir sa che i dati sono immutabili, può riusarli in parte o per
 intero quando si creano nuove strutture.
 Il seguente esempio mostra come Elixir ottimizza la creazione di
 nuovi dati:
@@ -246,9 +255,10 @@ iex> lista2 = [ 4 | lista1 ]
 [4, 3, 2, 1]
 \end{lstlisting}
 
-La lista2 infatti è creata usando la lista1 sapendo che non
-cambierà mai durante il flusso di esecuzione, quindi mette
-semplicimente in coda la lista1.
+La \textit{lista2} infatti è creata usando la \textit{lista1}
+sapendo che non cambierà mai durante il flusso di esecuzione,
+quindi mette semplicimente in coda la \textit{lista1}, non dovendo
+creare una nuova copia della \textit{lista1}.
 
 \subsubsection{Garbage Collection}
 Un altro aspetto che può creare dubbi sul copiare dati, è che
@@ -258,8 +268,8 @@ pulire con il Garbage Collector.
 Scrivendo codice Elixir però ci rendiamo subito conto
 che ci porta a sviluppare codice con migliaia di processi leggeri,
 ed ogni processo ha il proprio heap. I dati nell'applicazione quindi
-sono suddivisi nei processi, e ogni heap è molto piccolo rendendo
-il garbage collector molto veloce. Se un processo termina prima che
+sono suddivisi nei processi, ogni heap è molto piccolo rendendo
+il garbage collector più veloce. Se un processo termina prima che
 il suo heap diventi pieno, tutti i suoi dati vengono eliminati, senza necessità
 di liberare la memoria rendendo il garbage collector
 efficiente. \cite{programming_elixir_immutability}

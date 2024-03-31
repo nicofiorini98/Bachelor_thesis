@@ -35,9 +35,9 @@ che vuole essere altamente responsivo.
 La concorrenza fa uso dei cosiddetti processi leggeri
 nella piattaforma Erlang, non sono processi del 
 sistema operativo, ma processi della
-VM, chiamato processo e non thread in quanto non
-condividono memoria tra di loro e sono completamente
-isolati.
+VM Beam, chiamato processo e non thread in quanto non
+condividono memoria e sono completamente
+isolati tra di loro.
 
 Un server tipico deve gestire migliaia di richieste, e
 gestirle concorrenzialmente è essenziale per non far
@@ -54,8 +54,7 @@ agli errori.
 
 Un processo appena creato occupa in memoria 326 words \cite{ErlangPr21:online},
 quindi in una macchina a 64 bit occupa 2608 byte.
-Lo si può vedere in Elixir facilmente nell'esempio 
-% \ref{lst:memoryoneprocess}
+Lo si può vedere in Elixir facilmente nell'esempio \ref{lst:memoryoneprocess}
 
 \begin{lstlisting}[language=elixir, caption={Memoria in un processo},captionpos=b,
 	label={lst:memoryoneprocess}]

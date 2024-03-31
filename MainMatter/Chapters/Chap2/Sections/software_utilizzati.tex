@@ -1,0 +1,135 @@
+\section{Software utilizzati}
+
+I studi sulle performance riportati nel capitolo 3
+sono stati effettuati
+utilizzando il sistema operativo Linux per scelta personale e
+per la varietà di software disponibile su Linux.
+Viene riportata l'installazione effettuata su Linux per i vari test e le
+relative configurazioni, in modo da poter testare gli esempi
+riportati in questo capitolo, l'installazione su Windows è immediata,
+infatti è disponibile sia l'installer per Erlang al seguente link: \url{https://www.erlang.org/downloads.html}
+e l'installer anche per elixir nel sito ufficiale \url{https://elixir-lang.org/install.html},
+mentre su linux necessita qualche configurazione in più e viene riportata
+l'installazione tramite asdf.
+
+\subsection{Installazione software utilizzati} 
+
+Per avere l'ultima versione di Erlang ed Elixir su Linux bisogna affidarsi
+al Tool version manager \textbf{asdf} in quanto le versioni disponibili nei
+package manager della distro di riferimento non sono aggiornate all'ultima
+versione.
+
+\subsubsection{Installazione asdf}
+
+Asdf è un tool version manager open source che consente di installare,
+gestire e utilizzare diverse versioni di software senza dover
+installare o gestire separatamente ciascuna versione. È soprattutto
+utile quando si valora su progetti che richiedono versioni specifiche
+del linguaggio. Nel nostro caso ci permette di scegliere l'ultima
+versione disponibile su qualunque distro linux indipendentemente
+dalla distro scelta.
+
+Per l'installazione di asdf basta seguire le istruzioni della
+documentazione ufficiale del tool al seguente URL: \url{https://asdf-vm.com/guide/getting-started.html}
+
+Le dipendenze necessarie da installare sono \textbf{curl} e \textbf{git},
+una volta installate le dipendenze richieste basta clonare la repository.
+In una distro debian i comandi risultano i seguenti:
+
+% \begin{lstlisting}[language=none,captionpos=b,caption={Struttura progetto},label={lst:struttura_progetto}]
+\begin{lstlisting}[language=none]
+> sudo apt install curl git
+> cd $HOME
+> git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.0
+\end{lstlisting}
+
+Inserire le seguenti righe nel file di configurazione \textit{.bashrc}:
+
+\begin{lstlisting}[language=none]
+. "$HOME/.asdf/asdf.sh"
+. "$HOME/.asdf/completions/asdf.bash"
+\end{lstlisting}
+
+Assicurarsi che l'installazione che sia avvenuta con successo:
+
+\begin{lstlisting}[language=none]
+> asfd --version
+
+v0.14.0
+\end{lstlisting}
+
+%---------------------------------------------------------------
+\subsubsection{Installazione Erlang}
+
+Una volta installato asdf, installare Erlang con la versione desiderata
+seguendo le istruzioni della seguente repository: \url{https://github.com/asdf-vm/asdf-erlang}
+Per una distro ubuntu si richiedono le seguenti dipendenze da installare con
+il package manager apt:
+\begin{lstlisting}[language=none]
+sudo apt-get -y install build-essential autoconf m4 libncurses5-dev
+libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc
+fop libxml2-utils libncurses-dev openjdk-11-jdk
+\end{lstlisting}
+
+Per evitare warning nell'intellisense di VScode, prima di procedere con i
+comandi di asdf, bisgona configurare
+le seguenti variabili d'ambiente per compilare la documentazione di Erlang
+necessaria al corretto funzionamento dell'intellisense di VSCode:
+
+\begin{lstlisting}[language=none]
+> export KERL_BUILD_DOCS=yes
+> export KERL_INSTALL_HTMLDOCS=yes
+> export KERL_INSTALL_MANPAGES=yes
+\end{lstlisting}
+
+Facendo attenzione ad usare la stessa sessione del terminale in cui sono
+stati eseguiti i precedenti comandi eseguire:
+
+\begin{lstlisting}[language=none]
+> asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
+> asdf install erlang 26.2
+> asdf global erlang 26.2 
+\end{lstlisting}
+
+Si può anche scegliere una versione differente di Erlang, fare attenzione
+alla versione dell'OTP che viene installata in quanto sarà
+necessaria per l'installazione di Elixir.
+
+Se tutto è andato a buon fine si può testare l'avvenuta installazione
+tramite il comando \textit{erl} che avvia l'ambiente interattivo di erlang.
+
+%------------------------------------------------------
+\subsubsection{Installazione Elixir}
+
+Per Elixir il procedimento con asdf è simile, bisogna solo fare
+attenzione alla versione OTP di Erlang installata, in quanto
+Elixir viene compilato con diverse versioni dell'OTP,
+fare riferimento al seguente link per il procedimento di installazione:
+\url{https://github.com/asdf-vm/asdf-elixir}
+
+Installare le dipendenze richieste:
+\begin{lstlisting}[language=none]
+> sudo apt-get install unzip
+\end{lstlisting}
+
+Eseguire i seguenti comandi per procedere con l'installazione:
+\begin{lstlisting}[language=none]
+> asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+> asdf install elixir 1.16.0-otp-26
+> asdf global elixir 26.2 
+\end{lstlisting}
+
+Se tutto è andato a buon fine si può testare elixir avviando l'ambiente
+interattivo di elixir \textbf{iex}.
+
+%---------------------------------------------------------------------------
+
+\subsubsection{Configurazione VsCode}
+
+VsCode supporta numerosi linguaggi di programmazione, è gratuito e
+open source, è un editor leggero che consente un esperienza di sviluppo
+piacevole e produttiva con una vasta gamma di estensioni installabili.
+Per quanto riguarda Elixir, è possibile installare l'estensione
+\textbf{ElixirLS} disponibile al seguente link:
+\url{https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls}
+ 

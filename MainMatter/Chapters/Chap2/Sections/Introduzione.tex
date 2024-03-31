@@ -5,10 +5,11 @@
 In questo capitolo, esamineremo le caratteristiche distintive
 di Elixir, un linguaggio di programmazione funzionale e
 concorrente che sfrutta appieno la potenza della piattaforma
-OTP (Open Telecom Platform), non si vuole coprire ogni dettaglio
+OTP (Open Telecom Platform). Non si vuole coprire ogni dettaglio
 del linguaggio, ma mettere in evidenza le caratteristiche
 fondamentali per iniziare a capire come pensare il codice
-con questo linguaggio.
+con questo linguaggio e quali sono le caratteristiche che
+lo rendono un opzione da considerare in determinati contesti.
 
 Elixir, scritto in Erlang ed eseguito sulla macchina virtuale
 Erlang (BEAM), eredita gli obiettivi di Erlang, ma apporta
@@ -16,9 +17,9 @@ miglioramenti significativi per rendere il linguaggio più
 appetibile e moderno.
 
 Erlang, nato nel 1986, è stato progettato per semplificare
-lo sviluppo di software concorrente e robusto.
+lo sviluppo di software concorrente robusto e scalabile.
 Elixir si basa su queste fondamenta solide, offrendo un'API
-più pulita e astrazioni avanzate che consentono ai programmatori
+più pulita e astrazioni dell'OTP che consentono ai programmatori
 di ragionare a un livello più elevato, facilitando la scrittura
 di codice concorrente in modo intuitivo.
 
@@ -34,8 +35,8 @@ Bisogna capire come la macchina virtuale Beam affronta la concorrenza,
 Elixir in particolare è un linguaggio orientato alla concorrenza e 
 le astrazioni che fornisce sono proprio per far sì che
 si programmi in modo concorrenziale portando ad avere un
-codice responsivo e gestendo bene i processi attraverso 
+codice responsivo, e gestendo bene i processi attraverso 
 il meccanismo di Supervision, il software diventa anche robusto.
-Un altro punto da affrontare è l'immutabilità dei dati, è un concetto
-chiave in Elixir ed Erlang, è proprio questa caratteristica
+Un altro punto che si affronta è l'immutabilità dei dati, un concetto
+chiave in Elixir ed Erlang, ed è proprio questa caratteristica
 che ci semplifica la programmazione concorrenziale.
