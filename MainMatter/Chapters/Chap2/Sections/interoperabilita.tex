@@ -1,4 +1,4 @@
-\section{Integrazione con codice esterno}
+\section{Integrazione con codice esterno}\label{subsec:mysubsection}
 Elixir compilato sulla Erlang VM (BEAM) offre completa Interoperabilità
 con il codice erlang, avendo a disposizione tutta la gamma di librerie
 già sviluppate per Erlang, per questo molte librerie non sono disponibili
@@ -147,7 +147,37 @@ in un processo che comunica tramite Port non porta alla
 terminazinoe della VM. Per questi motivi prima di integrare
 codice esterno tramite NIF conviene sempre prendere in considerazione
 il meccanismo Port prima, per non perdere i benefici dati dalla
-piattaforma Erlang.
+piattaforma Erlang. In Figura \ref{fig:port_communication}
+si può vedere come la macchina virtuale comunica con un
+processo esterno attraverso questo meccanismo, il processo che
+crea il Port viene chiamato Processo connesso, a questo punto
+si comunica con il processo connesso in due modi:
+\begin{enumerate}
+	\item Tramite l'API fornita da Elixir \cite{Port—Eli85:online},
+	si possono mandare messaggi in maniera sync.
+	\item Tramite le primitiva send/2 si può inviare un
+	messaggio al processo in maniera asincrona.
+\end{enumerate}
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[keepaspectratio=true,scale=0.35]{images/port_communication.png}
+	\caption{Comunicazione con Port \cite{ErlangPo88:online}}
+  	\label{fig:port_communication}
+\end{figure}
+
+Viene riportato nell'esempio \ref{lst:port_example},
+un apertura di una Port per il comando "echo" di bash.
+
+\begin{lstlisting}[language=elixir,captionpos=b
+	caption={Comando echo con Port},label={lst:port_example}]
+
+iex> path = System.find_executable("echo")
+iex> port = Port.open({:spawn_executable, path},
+...  [:binary, args: ["hello world"]])
+iex> flush()
+{#Port<0.1380>, {:data, "hello world\n"}}	
+\end{lstlisting}
 
 \subsubsection{La libreria ErlPort}
 Un caso di particolare interesse può essere la comunicazione
@@ -156,4 +186,5 @@ di trarre vantaggio dalla vasta libreria offerta dalla grande
 community degli sviluppatori di Python.
 Proprio in quest'ambito la libreria \textbf{ErlPort} ci consente
 di avviare istanze python da Elixir, una libreria open source
-costruita grazie al meccanismo Port.
+costruita grazie al meccanismo Port, in grado di interagire con
+il linguaggio python o ruby.
