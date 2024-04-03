@@ -58,7 +58,7 @@ end
 
 % --------------------------------------------
 
-\subsection{Funzione ricorsiva non ottimizzata}
+\subsection{Funzione ricorsiva}
 Nel Listing \ref{lst:listsumrecursive} è riportata l'implementazione
 della funzione ricorsiva che risolve il problema definito sopra.
 
@@ -76,7 +76,7 @@ defp sum_recursive(n), do: n + sum_recursive(n - 1)
 \end{lstlisting}
 
 %---------------------------------------------------------------------
-\subsection{Funzione ricorsiva non ottimizzata}
+\subsection{Funzione ricorsiva ottimizzata}
 Nel Listing \ref{lst:listsumrecursivetail} è riportata l'implementazione
 della funzione ricorsiva ottimizzata con il metodo tail optimization,
 Elixir come vedremo dai risultati del Benchmark risolve il problema
@@ -398,7 +398,7 @@ end
 \end{lstlisting}
 
 La funzione costruisce un report in HTML che riporta la Tabella
-in figura
+in figura \ref{fig:report_tab_interoperabilita}
 
 \begin{figure}[!htp]
     \centering
@@ -407,12 +407,11 @@ in figura
   	\label{fig:report_tab_interoperabilita}
 \end{figure}
 
-Come possiamo notare le funzioni scritte in C++ risultano più veloci, nonostante
-potrebbero essere ottimizzate ulteriormente. La strategia con il Port risulta
-essere seconda alla strategia con NIF, come era previsto, e come
-già detto nella documentazione di Erlang, il metodo con Port è più difficile
-da utilizzare a primo impatto in quanto si deve decidere un protocollo di
-codifica e decodifica, ma una volta scelto risulta il metodo più stabile
-e affidabile 
+Come possiamo notare le funzioni scritte in C++ risultano più veloci,
+non ci sono grosse differenze tra il metodo NIF e il metodo con le Port,
+per molti casi la strategia con le Port dovrebbe risultare la più conveniente.
 
-
+Un fatto molto curioso sono le funzioni implementate in Elixir,
+notiamo che la ricorsione ottimizzata è molto più veloce rispetto
+alla ricorsione classica, questo dà un idea che per molte chiamate ricorsive
+l'ottimizzazione con la Tail Recursion sia obbligatoria.
