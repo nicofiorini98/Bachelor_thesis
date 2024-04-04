@@ -7,10 +7,12 @@ che ci permette di valutare le performance di esecuzione di
 funzioni, in particolare le funzioni da eseguire saranno due funzioni
 scritte in Elixir, ed altre due con il meccanismo di integrazione
 di cui si è parlato nel paragrafo \ref{subsec:mysubsection}
-Il problema che si vuole risolvere è l'operazione somma
-riportata nell'equazione \ref{eq:problem_interoperability}.
+Il problema che si vuole risolvere è il problema definito
+nell'equazione \ref{eq:problem_interoperability}.
 \begin{equation}
-	result = \sum_{i=1}^{n}i \label{eq:problem_interoperability}
+	[n_{1},n{_2}...n{_m}] \rightarrow [\sum_{i=1}^{n_{1}}i,\sum_{i=1}^{n_{2}}i,...,\sum_{i=1}^{n_{m}}i]
+  \rightarrow [sum_{1},sum_{2},...,sum_{m}]
+  \label{eq:problem_interoperability}
 \end{equation}
 
 Le funzioni implementate prendono come input una lista
@@ -47,10 +49,9 @@ come nel Listing \ref{lst:speedSum}:
 	caption={Modulo di riferimento},
 	label={lst:speedSum}]
 defmodule Speedsum do
-
+....
 # Funzioni implementate
-
-
+....
 end
 
 
@@ -109,10 +110,9 @@ Con l'Inter process communication in Erlang ed Elixir, si può comunicare
 con un processo esterno tramite il meccanismo Port, e si può comunicare con
 i cosiddetti file descriptor, nel nostro caso è stata implementata la
 comunicazione usando lo standard input e lo standard output. 
-Per la comunicazione si deve scegliere un formato di codifica e decodifica
-per la comunicazione, per non complicare le cose si è scelto
-una comunicazione line by line, dove la lista viene inviata
-da Elixir nel formato "1000000,2000000,5000000" scegliendo come
+Per la comunicazione si deve scegliere un formato di codifica e decodifica, per non complicare le cose si è scelto
+si è scelta una comunicazione line by line, dove la lista viene inviata
+da Elixir nel formato "$n_{1},n_{2},...,n_{m}$" scegliendo come
 carattere delimitatore la ",".
 
 Il codice C++ che risolve il nostro problema è riportato nel Listings
@@ -406,6 +406,14 @@ in figura \ref{fig:report_tab_interoperabilita}
 	\caption{Report di Benchee}
   	\label{fig:report_tab_interoperabilita}
 \end{figure}
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[keepaspectratio=true,scale=0.5]{images/newplot.png}
+	\caption{Report a barre, iterazioni a secondo}
+  	\label{fig:report_barre}
+\end{figure}
+
 
 Come possiamo notare le funzioni scritte in C++ risultano più veloci,
 non ci sono grosse differenze tra il metodo NIF e il metodo con le Port,
