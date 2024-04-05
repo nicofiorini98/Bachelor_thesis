@@ -5,6 +5,283 @@ con i server scritti in Python e Node, usando
 la libreria \textbf{Flask}\cite{Welcomet46:online} per
 Python e la libreria \textbf{Express}\cite{ExpressN36:online} per Node.
 I benchmark vengono eseguiti sulla stessa macchina con il tool
-di apache \textbf{ab - Apache HTTP server benchmarking tool}
-\cite{abApache17:online},
+\textbf{wrk}, wrk è uno strumento moderno di benchmarking HTTP
+in grado di generare un carico significativo se eseguito su una
+singola CPU multi-core \cite{wgwrkMod56:online}.
+
+% \textbf{ab - Apache HTTP server benchmarking tool}
+% \cite{abApache17:online}.
+
+\subsection{Implementazione dei Server}
+
+Gli http server implementati sono molto semplici, per
+fare load testing si dovrebbero simulare situazioni
+di calcolo reale sul server http, in questo caso si
+vuole solo avere un idea di come Elixir performa
+su una risposta breve ad una chiamata GET
+all'indirizzo localhost:<port>/ping, rispondendo
+con un semplice html con la stringa "pong".
+
+\subsubsection{Http Server Elixir}
+
+Per utilizzare la libreria Plug basta inserire la dipendeza
+richiesta nel file mix.exs:
+
+\begin{lstlisting}[language=none, caption={Implementazione server con Plug},captionpos=b,
+	label={lst:server_elixir}]
+{:plug_cowboy, "~> 2.0"},             # http server library
+\end{lstlisting}
+
+Basta eseguire il comando "mix deps.get" per
+scaricare le dipendenze.
+
+
+Nel Listing \ref{lst:server_elixir} è riportato il codice che
+avvia un http server con la libreria Plug.
+
+
+\begin{lstlisting}[language=elixir, caption={Implementazione server con Plug},captionpos=b,
+	label={lst:server_elixir}]
+defmodule MyRouter do
+  use Plug.Router
+  
+  plug :match
+  plug :dispatch
+  
+  get "/ping" do
+    send_resp(conn, 200, "pong")
+  end
+  
+  match _ do
+    send_resp(conn, 404, "oops")
+  end
+end
+\end{lstlisting}
+
+Per l'avvio del server ci si affida ad un Supervisor
+riportato nel Listing \ref{lst:supervisor_http}.
+
+\begin{lstlisting}[language=elixir, caption={Supervisor dell'applicazione HTTP},
+	captionpos=b,label={lst:supervisor_http}]
+defmodule InteroperabilityTest.MyHttpApplication do
+  use Application
+  require Logger
+
+  def start(_type, _args) do
+
+    # uncomment to start observer with the application
+    # Observer.start_observer()
+
+    children = [
+      {Plug.Cowboy, scheme: :http,
+	  plug: MyRouter, options: [port: cowboy_port()]}
+    ]
+
+    # opzioni per il supervisor del modulo Myhttp
+    opts = [strategy: :one_for_one, name: MyHttpServer.Supervisor]
+
+    Logger.info("Starting application on port #{cowboy_port()}...")
+    Supervisor.start_link(children, opts)
+  end
+
+  defp cowboy_port, do: Application.get_env(:example, :cowboy_port, 3000)
+
+end
+\end{lstlisting}
+
+%--------------------------------------------------
+\subsubsection{HTTP Server Python}
+
+Un semplice Server python come quello di Elixir si può fare con
+la libreria Flask, il codice è riportato nel Listing \ref{lst:server_python}
+
+\begin{lstlisting}[language=ipython, caption={Server Python(Flask)},
+	captionpos=b,label={lst:server_python}]
+from flask import Flask
+
+app = Flask(__name__)
+	
+@app.route('/ping')
+def ping():
+    return 'pong'
+	
+if __name__ == '__main__':
+    app.run(debug=False)
+
+\end{lstlisting}
+
+Assumendo di avere l'interprete Python
+installato sulla macchina, per
+avviare il server basta installare la libreria Flask:
+
+\begin{lstlisting}[language=none]
+> pip install flask
+...
+> python server.py
+\end{lstlisting}
+
+
+\subsubsection{HTTP Server Node}
+
+Con Node il Server viene implementato con la libreria Express.
+
+\begin{lstlisting}[language=ipython, caption={Server Node(Express)},
+	captionpos=b,label={lst:server_node}]
+const express = require('express');
+const app = express();
+	
+app.get('/ping', (req, res) => {
+	res.send('pong');
+});
+	
+const PORT = process.env.PORT || 5000; 
+app.listen(PORT, () => {
+	console.log('Server is running on port ${PORT}');
+});
+	
+\end{lstlisting}
+
+Assumendo di avere Node.js installato sulla macchina
+per avviare il server basta installare la libreria Express:
+\begin{lstlisting}[language=none]
+> npm install express
+...
+> node server.js
+\end{lstlisting}
+
+\subsection{Esecuzione Test Http}
+
+Come accennato viene usato il tool wrk per eseguire
+più richieste concorrenziali e multithreading, vengono
+eseguite per semplicità sulla stessa macchina, sviluppi
+futuri possono prevedere un Load Testing più complesso
+con il tool Apache Jmeter, eseguendo i test su
+macchine differenti simulando applicazioni di vita reale.
+Come detto in questo luogo si vuole
+avere la percezione di quanto Elixir sia adatto a questo
+scopo, infatti l'architettura leggera di Elixir e il sistema
+di gestione della concorrenza consente di gestire
+migliaia di connessioni simultanee in modo efficiente
+senza bloccare il processo principale. Ciò consente
+di fornire tempi di risposta minimi, rendendo Elixir
+una scelta ideale per applicazioni real-time.
+
+Per installare wrk su un sistema debian, basta eseguire
+\begin{lstlisting}[language=none]
+> sudo apt-get update
+> sudo apt-get install wrk
+\end{lstlisting}
+
+Una volta installato basta eseguire un server per volta
+ed eseguire il comando per simulare richieste simutanee:
+
+\begin{lstlisting}[language=none]
+> wrk -t8 -c<n> -d10s --latency http://localhost:5000/ping
+\end{lstlisting}
+
+Il comando viene eseguito con 8 thread, e vengono lanciate
+$n$ richieste concorrenzialmente simulando richieste
+simultanee di utenti. L'opzione --latency serve per stampare la
+distribuzione di latenza delle richieste.
+
+Un esempio di output:
+
+\begin{lstlisting}[language=none]
+> wrk -t8 -c100 -d10s --latency http://localhost:5000/ping
+Running 10s test @ http://localhost:5000/ping
+  8 threads and 100 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency     1.66ms    1.33ms  34.83ms   83.83%
+    Req/Sec     8.01k   626.33    10.90k    70.50%
+  Latency Distribution
+     50%    1.29ms
+     75%    2.01ms
+     90%    3.37ms
+     99%    6.30ms
+  639802 requests in 10.04s, 89.70MB read
+Requests/sec:  63697.09
+Transfer/sec:      8.93MB
+\end{lstlisting}
+
+Sono stati effettuati dei test al variare di $n$
+richieste concorrenziali e sono riportati i risultati
+ottenuti nelle Tabelle \ref{tab:elixir_report}
+\ref{tab:node_report}, \ref{tab:python_report}.
+Si può notare come Elixir performa in modo significativo
+rispetto agli altri due server, e da notare anche la latenza media
+di Elixir rispetto agli altri, d'altronde Elixir parallelizza
+le richieste il più possibile, durante i test con il tool
+\textbf{htop} si è notato un uso della cpu al 100\%
+mentre con Node, il server è single Thread, perciò le richieste
+vengono eseguite su un'unica CPU, e non si è percepito un'aumento
+significativo delle CPU. E' anche da notare che anche il client
+eseguito sulla stessa macchina è multithreading, e fa un uso
+elevato della CPU anch'esso, perciò non si nega che Elixir
+possa performare ancor di più.
+Le righe con valori Null, sono test eseguiti in
+cui il server chiude la connessione al client per mancanza
+di risorse, non si può affermare che Node e Python possono
+fare di meglio, i server andrebbero configurati meglio,
+in questo luogo si è voluto vedere come Elixir con la
+concorrenza leggera riesce a performare e parallelizzare
+in modo ottimale. Il server sicuramente può essere migliorato
+e non è un caso di studio reale, un test Http Server
+con applicativi reali è rimandato a futuri studi.
+Ci sono benchmark in rete in cui Elixir tramite il
+framework \textbf{Phoenix},
+riesce a gestire fino a 2 milioni di connessioni
+WebSocket simultanee
+su una singola macchina \cite{TheRoadt94:online}.
+
+\begin{table}%[htbp]
+  \centering
+  \begin{tabular}{cccc}
+    \toprule
+    n & richieste/s & Latenza AVG & Stdev \\
+    \midrule
+    10 & 40943 & 334.87 \textmu s & 2.64 ms \\
+    100 & 63697 & 1.66 ms& 1.33 ms \\
+    1000 & 594442 & 42.68 ms & 157.75 ms\\
+    10000 & 51872 & 81.47 ms& 24.58 ms\\
+    20000 & 18092 & 215.25 ms & 78.27 ms\\
+    \bottomrule
+  \end{tabular}
+  \caption{Elixir http server benchmark}
+  \label{tab:elixir_report}
+\end{table}
+
+\begin{table}%[htbp]
+  \centering
+  \begin{tabular}{cccc}
+    \toprule
+    n & richieste/s & Latenza AVG & Stdev \\
+    \midrule
+    10 & 6463 & 1.79ms \textmu s & 6.61 ms \\
+    100 & 6258& 15.32 ms& 2.33 ms \\
+    1000 & 5621.09 & 171.61 ms & 21.95 ms\\
+    10000 & 4988.81 & 519.53 ms& 70.12 ms\\
+    Null & Null & Null & Null\\
+    \bottomrule
+  \end{tabular}
+  \caption{Node http server benchmark}
+  \label{tab:node_report}
+\end{table}
+
+\begin{table}%[htbp]
+  \centering
+  \begin{tabular}{cccc}
+    \toprule
+    n & richieste/s & Latenza AVG & Stdev \\
+    \midrule
+    10 & 1679 & 4.69 ms & 458.13 \textmu s\\
+    100 & 1695 & 56.36 ms & 2.53 ms \\
+    1000 & 1609 & 88.96 ms & 67.44 ms\\
+    Null & Null & Null & Null\\
+    Null & Null & Null & Null\\
+    \bottomrule
+  \end{tabular}
+  \caption{Python http server benchmark}
+  \label{tab:python_report}
+\end{table}
+
 
