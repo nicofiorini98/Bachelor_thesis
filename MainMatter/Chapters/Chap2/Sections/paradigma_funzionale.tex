@@ -14,22 +14,25 @@ spesso si hanno variabili condivise mutabili, di conseguenza più parti del codi
 possono riferirsi alla stessa variabile, complicando la programmazione
 multithreading dovendosi preoccupare di meccanismi come il blocco
 sincronizzato o il locking per evitare le race condition tra più parti
-del codice, così non è immediato scrivere del codice concorrenziale sicuro
-riscontrando possibili comportamenti indeterminati se non gestiti bene.
-In un paradigma funzionale si predilogono le variabili immutabili che
+del codice. In questo modo non è immediato scrivere
+del codice concorrenziale sicuro aumentando la probabilità di errori e
+riscontrando possibili comportamenti indeterminati.
+
+In un paradigma funzionale invece si predilogono le variabili immutabili che
 aggirano questo problema riducendo il rischio di scrivere codice
 concorrenziale non sicuro.
 
 Cambiare paradigma non è immediato, un paradigma si può dire che
 definisce il modo di pensare al problema, nella programmazione ad
 oggetti per esempio si definiscono le cosidette classi,
-pensando al problema come oggetti che hanno un determinato comportamento,
+pensando al problema come ad oggetti che hanno un comportamento,
 e cambiano stato nel tempo.
 Questo può essere un modo di sviluppare intuitivo ma non sempre
-ottimale per la risoluzione di problemi. Nella programmazione funzionale
+ottimale per la risoluzione di problemi concorrenziali.
+Nella programmazione funzionale
 si cambia prospettiva, ovvero si ha un input, si passa l'input 
 alla funzione e si ottiene la trasformazione dell'input ottenendo
-l'output, quindi si trasformano dati, non si mutano.
+l'output, quindi si trasformano dati e non si mutano.
 
 In poche parole un linguaggio funzionale assume che scrivere un
 software complesso sia più facile nel momento in cui il codice ha
@@ -64,8 +67,10 @@ mix new <nome-progetto>
 
 Verrà creata una struttura per il progetto come nell'esempio \ref{lst:struttura_progetto},
 il codice sarà organizzato nella cartella \textbf{lib}, viene creata una
-cartella \textbf{test}, e il file per la configurazione del progetto \textbf{mix.exs}.
-Da notare che anche la configurazione del progetto avviene tramite funzioni.
+cartella \textbf{test} per gli unit test, e il file per
+la configurazione del progetto \textbf{mix.exs}.
+Da notare che anche la configurazione del progetto in mix.exs
+avviene tramite funzioni.
 
 \begin{lstlisting}[language=none,captionpos=b,caption={Struttura progetto},label={lst:struttura_progetto}]
 .
@@ -87,12 +92,10 @@ contesto della nostra applicazione con il comando:
 \begin{lstlisting}[language=none]
 iex -S mix 
 \end{lstlisting}
-% Si può compilare il progetto con:
-% \begin{lstlisting}[language=none]
-% mix compile
-% \end{lstlisting}
 
-Con Mix possiamo includere e scaricare facilmente anche librerie esterne attraverso
+
+Con Mix possiamo includere e scaricare facilmente
+anche librerie esterne attraverso
 il package manager definendo la dipendenza nel file di configurazione
 mix.exs.\cite{HexDocs99:online}
 
@@ -104,13 +107,14 @@ le responsabilità delle funzioni.
 Ci sono varie cose che si possono definire dentro un modulo,
 si possono definire delle \textbf{struct}
 ma cosa più importante si possono definire i cosiddetti 
-\textbf{Behaviour}, un modo per definire un interfaccia Api,
-Elixir fornisce delle astrazioni proprio attraverso questi,
+\textbf{Behaviour}, un modo per definire un interfaccia Api
+da poter riusare per altri moduli.
+Elixir fornisce delle astrazioni proprio attraverso questi Behaviour,
 come il GenServer ed il Supervisor.
-%TODO menzionare GenServer e Supervisor
+
 Ciò che si vuole evidenziare ora è che il progetto è definito
 in moduli, il modo che Elixir fornisce per organizzare il
-codice separando in namespace e poter dare delle particolari
+codice separando le funzioni in namespace e poter dare
 caratteristiche alle funzioni.
 
 % ----------------------------------------------------------------------------
@@ -172,7 +176,7 @@ Elixir cerca di assegnare il valore a destra dell'equazione
 al valore di sinistra cercando di risolvere l'equazione, tenta
 di fare un assegnazione dove possibile per risolvere l'equazione.
 Questo ci permette di usare quest'operatore per poter
-scomporre un dato, viene mostrato nelll'esempio\ref{pattern_matching}
+scomporre un dato, viene mostrato nelll'esempio\ref{lst:pattern_matching}
 tramite l'ambiente interattivo \textit{iex}
 
 \begin{lstlisting}[language=elixir, caption={Pattern Matching},captionpos=b,

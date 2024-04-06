@@ -10,7 +10,7 @@ riportati in questo capitolo, l'installazione su Windows è immediata,
 infatti è disponibile sia l'installer per Erlang al seguente link: \url{https://www.erlang.org/downloads.html}
 e l'installer anche per elixir nel sito ufficiale \url{https://elixir-lang.org/install.html},
 mentre su linux necessita qualche configurazione in più e viene riportata
-l'installazione tramite asdf.
+l'installazione tramite asdf (un tool version manager).
 
 \subsection{Installazione software utilizzati} 
 
@@ -51,7 +51,7 @@ Inserire le seguenti righe nel file di configurazione \textit{.bashrc}:
 . "$HOME/.asdf/completions/asdf.bash"
 \end{lstlisting}
 
-Assicurarsi che l'installazione che sia avvenuta con successo:
+Assicurarsi che l'installazione sia avvenuta con successo:
 
 \begin{lstlisting}[language=none]
 > asfd --version
@@ -62,8 +62,8 @@ v0.14.0
 %---------------------------ERLANG ------------------------------------
 \subsubsection{Installazione Erlang}
 
-Una volta installato asdf, installare Erlang con la versione desiderata
-seguendo le istruzioni della seguente repository: \url{https://github.com/asdf-vm/asdf-erlang}
+Una volta installato asdf, bisogna installare Erlang
+seguendo le istruzioni della seguente repository: \url{https://github.com/asdf-vm/asdf-erlang}.
 Per una distro ubuntu si richiedono le seguenti dipendenze da installare con
 il package manager apt:
 \begin{lstlisting}[language=none]
@@ -73,9 +73,9 @@ fop libxml2-utils libncurses-dev openjdk-11-jdk
 \end{lstlisting}
 
 Per evitare warning nell'intellisense di VScode, prima di procedere con i
-comandi di asdf, bisgona configurare
+comandi di asdf, bisogna configurare
 le seguenti variabili d'ambiente per compilare la documentazione di Erlang
-necessaria al corretto funzionamento dell'intellisense di VSCode:
+necessaria per il corretto funzionamento dell'intellisense di VSCode:
 
 \begin{lstlisting}[language=none]
 > export KERL_BUILD_DOCS=yes
@@ -108,7 +108,7 @@ Elixir viene compilato con diverse versioni dell'OTP,
 fare riferimento al seguente link per il procedimento di installazione:
 \url{https://github.com/asdf-vm/asdf-elixir}
 
-Installare le dipendenze richieste:
+Per una distro debian le dipendenze richieste sono:
 \begin{lstlisting}[language=none]
 > sudo apt-get install unzip
 \end{lstlisting}
@@ -133,4 +133,5 @@ piacevole e produttiva con una vasta gamma di estensioni installabili.
 Per quanto riguarda Elixir, è possibile installare l'estensione
 \textbf{ElixirLS} disponibile al seguente link:
 \url{https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls}
+Installabile anche direttamente dall'extension manager di VsCode.
  

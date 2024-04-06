@@ -36,11 +36,20 @@ campo dell'IoT per diversi motivi:
 	
 \end{enumerate}
 
-\section{IoT}
+\section{IoT - L'internet delle cose}
 
-L'Internet of Things o comunemente abbreviato IoT, rappresenta una
-rete di dispotivi capaci di acquisire informazioni tramite sensori
-o fare operazioni fisiche tramite attuatori.
+L'Internet of Things (IoT),
+traducibile in italiano come Internet delle cose,
+si riferisce a un sistema di dispositivi interconnessi
+attraverso Internet, capaci di raccogliere e scambiare
+dati tra loro e con sistemi esterni.
+Questi dispositivi possono essere di varie tipologie,
+come sensori, telecamere, veicoli, elettrodomestici,
+o qualsiasi altro oggetto in grado di essere dotato
+di una connessione Internet e di una capacità di comunicazione.
+L'obiettivo principale dell'IoT è quello di automatizzare processi,
+migliorare l'efficienza, fornire informazioni in tempo reale
+e creare nuove opportunità di servizi e applicazioni.
 
 Un architettura IoT ha una vasta gamma di applicazioni ed il suo uso 
 sta crescendo velocemente nella società moderna, basta pensare alle
@@ -49,7 +58,7 @@ per l'automazione, all'uso individuale con la domotica.
 
 \subsection{Architettura IoT}
 
-Un'architettura base per l'IoT può essere composta d quattro
+Un'architettura base per l'IoT può essere composta da quattro
 livelli come in figura \ref{fig:architettura_iot}
 
 \begin{figure}[!htp]
@@ -65,7 +74,7 @@ livelli come in figura \ref{fig:architettura_iot}
 	migliaia. Tutti questi dispositivi hanno il compito di
 	inviare o ricevere dati ai livelli superiori.
 	\item Il livello Network di un architettura IoT permette ai
-	dispositivi di comunicare con il livello tre.
+	dispositivi di comunicare tra di loro o con il livello tre.
 	Esempi di tecnologie di rete possono essere la rete WiFi,
 	Zigbee e reti cellulari come il 5G.
 	\item Il livello Data Processing gestisce la
@@ -85,16 +94,16 @@ livelli come in figura \ref{fig:architettura_iot}
 
 \subsubsection{Nerves}
 
-Un framework open-source utilizzato per Elixir
+Un framework open-source in Elixir
 è Nerves \cite{NervesPr90:online}, consente di
 sviluppare software embedded basato su Erlang/OTP.
 
 Offre agli sviluppatori un ambiente di sviluppo 
 coerente e potente per la creazione di firmware
-e software per dispositivi IoT e embedded.
+e software per dispositivi IoT ed embedded.
 Nerves semplifica il processo di sviluppo e distribuzione
 di software per dispositivi embedded,
-consentendo agli sviluppatori di creare facilmente
+consentendo agli sviluppatori di creare
 immagini firmware personalizzate e di integrare le funzionalità
 richieste dai dispositivi.
 
@@ -106,7 +115,7 @@ consentono alle aziende di servizi pubblici nei mercati emergenti
 di gestire sistemi finanziariamente sostenibili,
 efficienti e affidabili.
 
-Due dei loro prodotti sono contatori elettrici
+I loro prodotti sono contatori elettrici
 intelligenti e software di gestione della rete.
 Questi possono essere utilizzati per misurare
 il consumo di elettricità, raccogliere informazioni
@@ -131,10 +140,12 @@ la rete per la comunicazione con cui comunicano i
 dispositivi sono via radio,
 possono diventare irraggiungibili per vari fattori,
 come una mancanza di elettricità, guasto o mancanza di rete.
-Il sistema così ha bisogno di essere Fault-tolerant.
+Il sistema così ha bisogno di essere Fault-tolerant ed è
+uno dei cavalli di battaglia della piattaforma Erlang/OTP.
 Inoltre utilizzando il meccanismo Port di Elixir,
 vengono usati i vantaggi di Rust per processare
-i dati dagli Smart Meters.
+i dati dagli Smart Meters e processare i dati
+in modo efficiente.
 
 \begin{figure}[!htp]
     \centering
@@ -167,10 +178,9 @@ In particolare il lavoro effettuato è così ripartito:
 	ottenuti, in particolare vengono effettuati quattro test, i primi due
 	per valutare l'efficienza della concorrenza della VM, il terzo per
 	sperimentare l'interoperabilità con il codice C/C++ confrontando le
-	performance del codice C/C++ con quello di Elixir, ed il quarto
-	si occupa di misurare il throughput di un server Http scritto in
-	Elixir confrontandolo con dei semplici server scritti in Node
-	e Python.
+	performance del codice C/C++ con quello di Elixir, infine,nel quarto test
+	si misura il throughput di un server Http scritto in
+	Elixir confrontandolo con dei semplici server scritti in Node e Python
 
 \end{itemize}
 
