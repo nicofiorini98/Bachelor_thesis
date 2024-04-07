@@ -159,18 +159,19 @@ seguente file Json:
 
 \begin{lstlisting}[language=none]
 {
-	"somma" : [40,10,20],
-	"sottrazione": [10023, 1000, 200],
-	"moltiplicazione": [10, 10, 10],
-	"divisione": [72000,1000, 2]
+  "somma" : [40,10,20],
+  "sottrazione": [10023, 1000, 200],
+  "moltiplicazione": [10, 10, 10],
+  "divisione": [72000,1000, 2]
 }
 \end{lstlisting}
 
 Per ogni attributo viene calcolato il risultato della lista
 corrispondente, e stampato su un file CSV. La decodifica del file
 Json viene effettuata tramite la
-libreria \textbf{Poison}\cite{Poison—P5:online} come si può notare
-nella funzione parse\_json\_file() del Listing \ref{lst:concurrent_task_io}.
+libreria \textbf{Poison}\cite{Poison—P5:online} che si
+effettua nella funzione parse\_json\_file()
+del Listing \ref{lst:concurrent_task_io}.
 
 \begin{lstlisting}[language=none, caption={Output risultati Json nel csv},
 	captionpos=b,label={lst:output_risultati_json}]
@@ -180,9 +181,11 @@ nella funzione parse\_json\_file() del Listing \ref{lst:concurrent_task_io}.
 ....
 \end{lstlisting}
 
-Come nel precedente test, per ogni n operazioni effettuate e per m
-processi viene riportato il risultato in un file csv
-(Listing \ref{lst:MyFile}) da analizzare con Matlab.
+Come nel precedente test, per ogni
+$n$ operazioni effettuate e per $m$
+processi viene riportato il risultato in un file .csv
+uguale al precedente test (Listing \ref{lst:MyFile}),
+il file è da analizzare con Matlab.
 
 
 
@@ -203,7 +206,6 @@ TaskIO.run
 System.halt
 \end{lstlisting}
 	
-
 Il test fornito è stato eseguito più volte aumentando
 gli scheduler allocati all'avvio dell'istanza della VM.
 Si è scritto un semplice script in bash per eseguire
@@ -244,12 +246,6 @@ chmod +x <directory-path>/runtest.sh
 .<directory-path>/runtest.sh
 \end{lstlisting}
 
-Una volta avviati i test verrà creato un file .csv da
-analizzare con Matlab, i valori presenti nel file
-assumono la forma:
-
-I valori del csv sono scritti nello stesso formato
-come nel Listing \ref{lst:formatocsv} del precedente test.
 
 %++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Analisi Matlab}
@@ -353,31 +349,44 @@ e con 16 riportato in figura \ref{fig:16_schedulerIO}.
   	\label{fig:16_schedulerIO}
 \end{figure}
 
-I test risultano avere un andamento molto simili, quello che risulta
-avere un andamento del tempo a operazione più basso e stabile
-è quello con 4 scheduler, quello che si nota particolarmente
-è che in ogni grafico,
-un solo processo risulta avere un andamento alto circa il
+I test risultano avere andamenti molto simili, quello che risulta
+avere un andamento più basso e stabile
+è quello con 4 scheduler.
+
+Quello che si evidenzia è che in ogni grafico, l'andamento
+risultante da un solo processo risulta avere un andamento alto circa il
 doppio rispetto agli altri processi, questo è in linea con ciò che
 ci si aspettava, infatti con più processi la VM cerca di parallelizzare
 i processi. Con un solo scheduler ci si potrebbe aspettare che
 le operazioni con un solo processo risultano veloci quanto
-quelle con più processi, ma la CPU però mentre aspetta
-che un operazione IO venga completata può eseguire altre istruzioni,
+quelle con più processi, ma la CPU mentre aspetta
+che un operazione di Input e Output venga completata
+può eseguire altre istruzioni,
 per questo anche con un solo scheduler risulta vantaggioso
-utilizzare la computazione concorrenziale.
+utilizzare la computazione concorrenziale, il collo di bottiglia
+di questo test potrebbero essere le operazioni su File e non l'utilizzo,
+di Cpu, sarebbe da approfondire
+tale questione, una cosa che si può fare in futuri sviluppi è 
+provare ad assegnare l'operazioni di Input ed Output ad un GenServer
+che si prende la responsabilità di scrivere su File i risultati
+a blocchi, mantenendo i risultati su uno stato che si svuota ogni
+tot operazioni, questo può portare ad un maggiore utilizzo della CPU
+dando la responsabilità delle operazioni di IO ad un altro processo.
 
-Molte operazioni hanno dei picchi più alti rispetto ad altre,
-questo può essere dovuto dalle operazioni del Garbage Collector
-che avviene durante l'esecuzione delle operazioni.
+Un altro punto da evidenziare è che ci sono dei picchi negli
+andamenti, questo può essere dovuto dalle operazioni
+del Garbage Collector che avviene durante l'esecuzione
+delle operazioni.
 
 \subsubsection{Guadagno dei processi}
 
 Risulta utile in questo caso fare un grafico del guadagno dei
 processi rispetto all'utilizzarne uno solo. Nel Listing \ref{lst:guadagno_matlab}
-è riportato il guadagno di tempo in percentuale. Una percentuale di
-guadagno negativa risulta in una maggiore velocità rispetto ad utilizzare un
-solo processo.
+è riportato lo script Matlab che disegna i grafici del guadagno
+dei processi rispetto all'utilizzarne uno solo.
+Un guadagno in percetuale negativo risulta in una maggiore efficienza
+rispetto ad utilizzare un solo processo, un guadagno positivo
+risulta un degrado delle performance.
 
 \begin{lstlisting}[language=none,captionpos=b,
 	caption={Guadagno rispetto ad un processo},label={lst:guadagno_matlab}]
@@ -447,9 +456,11 @@ utilizzato, viene riportato in figura \ref{fig:4_io_guadagno}
 il Grafico che fa riferimento a 4 scheduler, che mostra che accedendo
 ai file concorrenzialmente apporta un miglioramento delle performance,
 consentendo di sfruttare più CPU disponibile.
-In particolare il numero di processi che porta più vantaggio è
-pari a 512 che migliora le performance in modo significativo
-con una media del -47.8\%.
+In particolare il numero di processi che porta più vantaggio
+di quelli testati è
+quello più alto pari a 512 che migliora le performance in modo
+significativo, apportando un guadagno delle performance medio
+di -47.8\%
 In figura \ref{fig:4_512_io_guadagno} viene riportato il guadagno
 in percentuale di 512 processi rispetto all'utilizzarne uno solo.
 

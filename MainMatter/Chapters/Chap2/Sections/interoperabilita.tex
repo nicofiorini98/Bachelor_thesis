@@ -1,10 +1,11 @@
 \section{Integrazione con codice esterno}\label{subsec:mysubsection}
-Elixir compilato sulla Erlang VM (BEAM) offre completa Interoperabilità
-con il codice erlang, avendo a disposizione tutta la gamma di librerie
-già sviluppate per Erlang, per questo molte librerie non sono disponibili
-per Elixir potendo usare quelle già ben testate sulla piattaforma Erlang.
-Non tutto può essere implementato in modo efficiente su questa piattaforma
-tramite Elixir o Erlang, basti pensare che l'immutabilità dei dati
+Elixir è offre completa Interoperabilità
+con il codice Erlang, e si ha a disposizione tutta la gamma di librerie
+già sviluppate per Erlang, molte librerie non vengono riscritte in Elixir
+potendo usare quelle già ben testate sulla piattaforma Erlang.
+
+Non tutto può essere implementato in modo efficiente
+usando Erlang ed Elixir, basti pensare che l'immutabilità dei dati
 porta molti vantaggi per lo sviluppo concorrenziale, ma porta altri
 svantaggi. Nella seguente lista vengono messi in evidenza alcune
 lacune che presenta la Erlang VM.
@@ -25,8 +26,9 @@ lacune che presenta la Erlang VM.
 
 Ci possono essere un sacco di insiemi di problemi in cui Elixir
 non è la soluzione migliore, ma può risultare utile comunque
-usare Elixir e risolvere sotto problemi con un codice esterno
-scritto in un altro linguaggio.
+usare Elixir e risolvere problemi in cui non è adatto
+con un codice esterno scritto in un altro linguaggio adatto
+alle esigenze specifiche.
 In particolare Elixir può comunicare con altri linguaggi
 in 3 modi diversi:
 
@@ -40,7 +42,8 @@ in 3 modi diversi:
 	\item Erlang Distribution Protocol: Si può comunicare con
 	processi esterni anche su macchine differenti
 	attraverso il protocollo di distribuzione fornito per distribuire
-	un applicazione su più nodi scalando orizzontalmente un sistema.
+	un applicazione su più nodi scalando orizzontalmente un sistema,
+	questo metodo non è stato sperimentato in questo luogo.
 \end{itemize}
 
 
@@ -53,12 +56,13 @@ nello stesso spazio di memoria della Erlang VM.
 Questa strategia di interoperabilità porta a dei benefici
 sulle performance elevati per alcune tipologie di calcolo
 come quello matematico.
-Erlang fornisce un interfaccia \cite{Erlanger73:online}
-per poter scrivere funzioni C
-che possono essere chiamate direttamente da Elixir/Erlang.
+Erlang fornisce un API nel file header
+"erl\_nif.h" \cite{Erlanger73:online} consentendo 
+di scrivere funzioni C e poter essere chiamate direttamente
+dal programma Elixir/Erlang.
 
 Queste funzioni C devono essere compilate come librerie condivise,
-shared object(.so) in linux. Viene riportato
+shared object(.so in linux). Viene riportato
 nell' esempio \ref{lst:example_nif} il codice NIF
 che stampa "Hello from C"\cite{adoptingElixirchap7pag126}.
 
@@ -132,6 +136,9 @@ questo metodo ha degli svantaggi \cite{Erlanger73:online}:
 	responsività della VM e può portare a comportamenti strani, che possono
 	portare a un utilizzo della memoria eccessivo.
 \end{itemize}
+
+Un esempio più complesso dell'utilizzo di una NIF è riportato
+nel paragrafo \ref{subsec:NIF_cpp}.
 %------------------------ PORT -------------------
 
 \subsection{Interoperabilità con Port}
@@ -179,12 +186,42 @@ iex> flush()
 {#Port<0.1380>, {:data, "hello world\n"}}	
 \end{lstlisting}
 
+Un esempio di uso più complesso si trova nel paragrafo \ref{subsec:port_cpp}.
 \subsubsection{La libreria ErlPort}
 Un caso di particolare interesse può essere la comunicazione
-tra Elixir e python, per consentire ai programmatore di Elixir
-di trarre vantaggio dalla vasta libreria offerta dalla grande
+tra Elixir e python, per 
+trarre vantaggio dalla vasta gamma di librerie offerte dalla
 community degli sviluppatori di Python.
+
 Proprio in quest'ambito la libreria \textbf{ErlPort} ci consente
 di avviare istanze python da Elixir, una libreria open source
 costruita grazie al meccanismo Port, in grado di interagire con
-il linguaggio python o ruby.
+il linguaggio python o ruby. Non si entra in dettaglio di
+questa libreria.
+ErlPort permette a Erlang e il linguaggio esterno di scambiare
+dati, invocare funzioni l'uno sull'altro e gestire lo stato
+condiviso in modo trasparente.
+Questo facilita l'integrazione di applicazioni scritte in
+Erlang con applicazioni scritte in python o ruby e consente di
+sfruttare le specifiche capacità di ciascun linguaggio
+all'interno di un unico sistema.
+
+Ad esempio, con ErlPort, è possibile utilizzare Python
+per elaborare dati complessi o interfacce utente,
+mentre si sfruttano le potenti capacità di concorrenza di
+Erlang per gestire la comunicazione di rete o i
+processi di calcolo intensivo.
+
+Inoltre con questa libreria non ci si deve preoccupare
+della scelta di codifica e decodifica dei dati, ErlPort
+infatti utilizza il protocollo di serializzazione di Erlang,
+noto come External Term Format (ETF), per la codifica e
+la decodifica dei dati scambiati tra Erlang e altri
+linguaggi di programmazione.
+
+Non si entra in dettaglio della libreria, però questo è
+uno dei modi vantaggiosi per comunicare con python, e
+in futuri usi tale libreria è da tenere in considerazione per
+processare dati non convenienti per la VM beam.
+
+

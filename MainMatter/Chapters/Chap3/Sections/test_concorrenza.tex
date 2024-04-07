@@ -1,17 +1,24 @@
 \section{Test concorrenziale}\label{sec:test_concorrenziale}
 
+Questo test segue dal lavoro effettuato dalla mia collega
+Luisa Fausta D'Epiro, è una rivisitazione dei risultati
+ottenuti con qualche modifica e reinterpretazione dei risultati.\cite{tesiLuisa}, 
+
 In questo Test empirico si vuole vedere come Elixir
-si comporta all'aumentare dei processi.
+si comporta all'aumentare dei processi, per capire
+se lo scheduling rappresenta un collo di bottiglia
+all'aumentare dei processi utilizzati.
 
 In particolare si sono scelti una lista di campioni
-di processi "processes" da utilizzare per ogni test, per ogni
-valore della lista processes
+di processi (\textit{processes}) da utilizzare per ogni test,
+per ogni valore della lista \textit{processes}
 si eseguono una serie prodotti che vanno da 500 prodotti
 a 100000 prodotti con uno step di 500.
 
 Si calcola quindi il tempo impiegato per ogni campione
 e si stampa il campione sul un file csv da poter analizzare
-ed interpretare su Matlab.
+ed interpretare successivamente con Matlab.
+
 I campioni di processi da creare per ogni test
 sono riportati nella lista:
 \begin{lstlisting}[language=none]
@@ -92,8 +99,7 @@ defmodule ConcurrentTask do
 		"#{available_scheduler},",
 		"#{time},",
 		"#{processnumber},",
-		"#{productsnumber},",
-		"#{time/productsnumber}\n"
+		"#{productsnumber}\n"
   	]
 
 	# scrittura risultato su file
@@ -108,6 +114,7 @@ La funzione write che si occupa della scrittura
 dei dati su file si trova nel modulo MyFile riportato nel
 Listing \ref{lst:MyFile}.
 
+\newpage
 
 \begin{lstlisting}[language=elixir, caption={Modulo MyFile},
 	captionpos=b,label={lst:MyFile}]
@@ -132,7 +139,9 @@ in precedenza.
 \subsection{Esecuzione Test}
 
 Si è creato uno script per l'ambiente interattivo iex per l'avvio
-della funzione voluta riportato nel Listing \ref{lst:script_iex}
+della funzione voluta riportato nel Listing \ref{lst:script_iex},
+viene compilato il modulo concurrentTask ed eseguita la funzione
+run().
 
 \begin{lstlisting}[language=none,captionpos=b,
 	caption={Script iex per l'avvio dei test},
@@ -145,7 +154,6 @@ System.halt
 \end{lstlisting}
 	
 
-
 Il test fornito è stato eseguito più volte aumentando
 gli scheduler allocati all'avvio dell'istanza della VM.
 Si è scritto un semplice script in bash per eseguire
@@ -153,7 +161,9 @@ i vari test all'aumentare degli scheduler allocati, lo script
 è riportato nel Listing \ref{lst:script_bash}.
 La macchina virtuale di default viene allocata con 8
 scheduler, si avvia con il numero di scheduler voluti
-impostando il flag --erl "+S1".
+impostando il flag --erl "+S1", per l'avvio con più
+di 8 scheduler si deve forzare la macchina virtuale
+a farlo con il flag "+sbt db".
 
 \begin{lstlisting}[language=none,captionpos=b,
 	caption={Script bash per l'avvio dei test},
@@ -194,7 +204,7 @@ assumono la forma:
 
 \begin{lstlisting}[language=none,captionpos=b,
 	caption={File csv} \label{lst:formatocsv}]
-N\_Scheduler,N\_Available_Scheduler,Time,N\_Processes,N\_Products
+N_Scheduler,N_Available_Scheduler,Time,N_Processes,N_Products
 1,8,39,1,500
 1,8,24,1,1000
 1,8,19,1,1500
@@ -212,11 +222,10 @@ test, stampando un grafico per ogni numero di scheduler utilizzato.
 Lo script Matlab è riportato nel Listing \ref{lst:analisi_matlab}.
 
 \begin{lstlisting}[language=none,captionpos=b,
-	caption={File csv},label={lst:analisi_matlab}]
-N\_Scheduler,N\_Available_Scheduler,Time,N\_Processes,N\_Products
-opts = detectImportOptions('/home/nico/project/tesi/analisi_elixir/File/test_concorrenza2.csv');
+	caption={Codice Matlab per la stampa dei grafici},label={lst:analisi_matlab}]
+opts = detectImportOptions('<replace-with-filecsv-path>');
 opts.DataLine = 2;
-data = readtable('/home/nico/project/tesi/analisi_elixir/File/test_concorrenza2.csv', opts);
+data = readtable('<replace-with-filecsv-path>', opts);
 
 colors = [
     255 0   0   % Red
@@ -272,59 +281,70 @@ end
 
 Lo script Matlab stampa 16 grafici, ne vengono riportati
 tre, per l'esecuzione con 1 scheduler in figura \ref{fig:1_scheduler},
-per 8 scheduler in figura \ref{fig:8_scheduler}
-e per 16 \ref{fig:16_scheduler}.
+,con 4 scheduler in figura \ref{fig:4_scheduler} per 8 scheduler in figura \ref{fig:8_scheduler}
+e per 16 in figura \ref{fig:16_scheduler}.
 
 \begin{figure}[!htp]
     \centering
-    \includegraphics[keepaspectratio=true,scale=0.3]{images/matlab/1_scheduler.png}
+    \includegraphics[keepaspectratio=true,scale=0.33]{images/matlab/1_scheduler.png}
 	\caption{Grafico con 1 scheduler}
   	\label{fig:1_scheduler}
 \end{figure}
 
 \begin{figure}[!htp]
     \centering
-    \includegraphics[keepaspectratio=true,scale=0.27]{images/matlab/8_scheduler.png}
+    \includegraphics[keepaspectratio=true,scale=0.335]{images/matlab/4_scheduler.png}
+	\caption{Grafico con 4 scheduler}
+  	\label{fig:4_scheduler}
+\end{figure}
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[keepaspectratio=true,scale=0.335]{images/matlab/8_scheduler.png}
 	\caption{Grafico con 8 scheduler}
   	\label{fig:8_scheduler}
 \end{figure}
 
 \begin{figure}[!htp]
     \centering
-    \includegraphics[keepaspectratio=true,scale=0.27]{images/matlab/16_scheduler.png}
+    \includegraphics[keepaspectratio=true,scale=0.335]{images/matlab/16_scheduler.png}
 	\caption{Grafico con 16 scheduler}
   	\label{fig:16_scheduler}
 \end{figure}
 
-I test risultano avere degli andamenti simi, possiamo notare che
+I test risultano avere degli andamenti simili, possiamo notare che
 con l'effettuazione di pochi prodotti, aumentare il numero dei processi
 porta ad un degradamento delle performance, in quanto la VM si occupa più
-di schedulare i processi che a fare prodotti.
-Si nota però che per pochi processi, e poche operazioni, l'andamento
-non è degradato. Come ci si aspetta però all'aumentare del numero di
-prodotti, lo scheduling inizia ad avere meno importanza,
-ed avere più processi porta a parallelizzare le operazioni ed a eseguirle
-più velocemente.
-Facendo uno zoom in un range che va da 88000 a 100000 prodotti come in
-figura \ref{fig:zoom8}, si nota che le operazioni con un solo processo
-hanno un andamento più alto, per esempio prendendo l'andamento più basso
-del range di riferimento per un processo che si trova a 93000 prodotti,
-eseguire 93000 prodotti risulta più efficiente se eseguiti con più di 3
-processi.
+di schedulare i processi che a fare prodotti, uno zoom di questo
+andamento è riportato in figura \ref{fig:zoom_8_inizio}.
+Per pochi prodotti come previsto lo scheduling fa perdere efficienza
+alle operazioni svolte.
+Però si nota che l'andamento con pochi processi lo scheduling non porta
+ad una mancanza di efficienza nonostante le operazioni da svolgere prendono
+pochissimo tempo.
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[keepaspectratio=true,scale=0.335]{images/matlab/zoom_8_inizio.png}
+	\caption{Zoom con 8 scheduler, range 500-10000 prodotti}
+  	\label{fig:zoom_8_inizio}
+\end{figure}
+
+Facendo uno zoom per un numero di prodotti più importante, come in
+figura \ref{fig:zoom_8_fine}, si nota che con un processo le operazioni
+da svolgere risultano più lente, e già con più processi la parallelizzazione
+inizia ad avere più senso.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[keepaspectratio=true,scale=0.33]{images/matlab/zoom_8_fine.png}
+	\caption{Zoom con 8 scheduler, range 95000-100000 prodotti}
+  	\label{fig:zoom_8_fine}
+\end{figure}
 
 Con un solo scheduler invece l'andamento con un processo risulta simile
 a quello con più processi, ma il tempo impiegato con 8 scheduler risulta
 in generale inferiore rispetto all'impiego di un solo scheduler, questo
-fa capire che Erlang riesce a parallelizzare il numero di prodotti.
-
-
-\begin{figure}[!htp]
-    \centering
-    \includegraphics[keepaspectratio=true,scale=0.30]{images/matlab/zoom_8_crop.png}
-	\caption{Zoom 88000-100000 prodotti con 8 scheduler}
-  	\label{fig:zoom8}
-\end{figure}
-
-
+perchè Erlang riesce a parallelizzare il numero di prodotti da effettuare
+su più processi.
 
 	

@@ -145,6 +145,8 @@ int sum_first_n(n){
 }
 \end{lstlisting}
 
+\newpage
+
 \begin{lstlisting}[language=elixir, caption={Somma N elementi},captionpos=b,
 	label={lst:somma_n_elixir}]
 defmodule Sum do
@@ -176,8 +178,8 @@ Elixir cerca di assegnare il valore a destra dell'equazione
 al valore di sinistra cercando di risolvere l'equazione, tenta
 di fare un assegnazione dove possibile per risolvere l'equazione.
 Questo ci permette di usare quest'operatore per poter
-scomporre un dato, viene mostrato nelll'esempio\ref{lst:pattern_matching}
-tramite l'ambiente interattivo \textit{iex}
+scomporre un dato, viene mostrato nelll'esempio \ref{lst:pattern_matching}
+tramite l'ambiente interattivo \textit{iex}.
 
 \begin{lstlisting}[language=elixir, caption={Pattern Matching},captionpos=b,
 	label={lst:pattern_matching}]
@@ -200,7 +202,7 @@ iex> tail
 
 Cambiare paradigma può essere difficoltoso, bisogna
 cambiare prospettiva, ma con le giuste intuizioni
-può risultare semplice. Per fare una transizione al funzionale
+può risultare semplice. Per fare una transizione mentale al funzionale
 bisogna capire soprattuto qual'è la differenza rispetto ad un
 linguaggio basato a stati.
 
@@ -217,7 +219,8 @@ print(my_array)
 \end{lstlisting}
 
 Ci potremmo aspettare che la stampa dell'array sia [1,2,3] quando in realtà
-l'output dipende da cosa fa la funzione. In Elixir non è implicito,
+l'output dipende da cosa fa la funzione, in molti linguaggi
+un array viene passato per riferimento. In Elixir non è implicito,
 ma l'assegnazione deve essere sempre esplicita come segue:
 
 \begin{lstlisting}[language=elixir]
@@ -228,24 +231,27 @@ IO.inspect(my_list)
 
 Se \textit{my\_list} non viene riassegnata, \textit{my\_list} non cambia.
 
-Il problema arriva nel momento in cui ci serve uno stato
-da condividere, una semplice variabile globale non esiste
+Il problema di questo approccio arriva nel momento
+in cui ci serve uno stato da condividere,
+infatti una semplice variabile globale non esiste
 in Elixir, e per mantenere uno stato dobbiamo
 affidarci ad un altro processo che lo mantiene per noi,
-ed Elixir almeno per questo ci da delle astrazioni
+ed Elixir per questo ci da delle astrazioni
 a cui fare affidamento come il Modulo \textbf{Agent} o il
 \textbf{GenServer} che verranno trattati in seguito.
 
 %--------------------------------------------------------------------------
 \subsection{Conseguenze sulle prestazioni dell'immutabilità}
 
-L'immutabilità ci consente di avere un controllo maggiore
+L'immutabilità ci consente di avere un buon controllo
 sul flusso del codice, si può pensare che può essere inefficiente
 e dovendo sempre copiare dati, inoltre si può pensare che si creano
 molti dati non più utilizzati da liberare in memoria con il Garbage collector
 portando anche il garbage collector ad essere inefficiente.
-Questo è vero solo in parte, infatti Elixir sfrutta la poprietà
-dell'immutabilità per limitare l'inefficienza.
+Questo è vero in parte, per alcune tipologie di problemi come
+algoritmi che fanno uso di matrici, ma Elixir comunque sfrutta
+la poprietà dell'immutabilità per limitare l'inefficienza rendendo
+altri problemi più efficienti rispetto ad altri linguaggi.
 
 Elixir sa che i dati sono immutabili, può riusarli in parte o per
 intero quando si creano nuove strutture.
@@ -262,14 +268,15 @@ iex> lista2 = [ 4 | lista1 ]
 La \textit{lista2} infatti è creata usando la \textit{lista1}
 sapendo che non cambierà mai durante il flusso di esecuzione,
 quindi mette semplicimente in coda la \textit{lista1}, non dovendo
-creare una nuova copia della \textit{lista1}.
+creare una nuova copia della \textit{lista1} per creare 
+la \textit{lista2}.
 
 \subsubsection{Garbage Collection}
 Un altro aspetto che può creare dubbi sul copiare dati, è che
 si lasciano spesso vecchi dati non più utilizzati da dover
 pulire con il Garbage Collector.
 
-Scrivendo codice Elixir però ci rendiamo subito conto
+Scrivendo codice Elixir però ci si rende subito conto
 che ci porta a sviluppare codice con migliaia di processi leggeri,
 ed ogni processo ha il proprio heap. I dati nell'applicazione quindi
 sono suddivisi nei processi, ogni heap è molto piccolo rendendo

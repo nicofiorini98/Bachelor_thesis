@@ -1,11 +1,15 @@
-\section{Test interoperabilità con C/C++}
+\newpage
 
+\section{Test interoperabilità con C/C++}
 
 In questo test empirico viene utilizzata la libreria Benchee
 che ci permette di valutare le performance di esecuzione di
 funzioni, in particolare le funzioni da eseguire saranno due funzioni
-scritte in Elixir, ed altre due con il meccanismo di integrazione
-di cui si è parlato nel paragrafo \ref{subsec:mysubsection}
+scritte in Elixir, ed altre due con il tramite i due meccanismi di
+interoperabilità discussi nel paragrafo \ref{subsec:mysubsection},
+il meccanismo con Port e con le NIF.
+
+\subsection{Definizione problema da risolvere}
 Il problema che si vuole risolvere è il problema definito
 nell'equazione \ref{eq:problem_interoperability}.
 \begin{equation}
@@ -18,25 +22,29 @@ Le funzioni implementate prendono come input una lista
 di interi, e si vuole restituire una lista che contiene
 i risultati dell'equazione \ref{eq:problem_interoperability}.
 
-L'input di riferimento è: [ 1000000, 2000000, 5000000], non si
-sono scelti numeri troppo piccoli per avere un gap visibile
-tra le strategia di implementazione adottate.
+L'input di riferimento è il seguente
+\begin{equation}
+  listInput = [ 1000000, 2000000, 5000000]
+\end{equation}
 
-Le funzioni si occupano di calcolare il risultato della somma
-\ref{eq:problem_interoperability} per ogni elemento e
-restituirà una lista con il relativo risultato per ogni elemento.
+Non si sono scelti numeri troppo piccoli per
+evidenziare al meglio le differenze tra le implementazioni.
+
+Le funzioni si occupano di calcolare il risultato della
+somma dei primi $n_{i}$ elementi restituendo il
+risultato $m_{i}$.
 
 Le funzioni sono implementate con 4 strategie differenti:
 \begin{enumerate}
-	\item list\_sum\_recursive(): Funzione implementata in elixir
+	\item \textbf{list\_sum\_recursive()}: Funzione implementata in elixir
 	tramite ricorsione.
-	\item list\_sum\_recursive\_tail(): Funzione implementata in elixir
+	\item \textbf{list\_sum\_recursive\_tail()}: Funzione implementata in elixir
 	tramite ricorsione ottimizzata, dove l'ultima istruzione è la
 	chiamata ricorsiva, in modo che elixir ottimizza la ricorsione
 	con la tail optimization.
-	\item list\_sum\_port(): Funzione implementata in C++, Elixir interagisce
+	\item \textbf{list\_sum\_port()}: Funzione implementata in C++, Elixir interagisce
 	con il codice tramite il meccanismo IPC Port.
-	\item list\_sum\_iterative\_nif(): Funzione implementata in C++, Elixir
+	\item \textbf{list\_sum\_iterative\_nif()}: Funzione implementata in C++, Elixir
 	interagisce con il codice C++ tramite il meccanismo NIF.
 \end{enumerate}
 
@@ -78,11 +86,14 @@ defp sum_recursive(n), do: n + sum_recursive(n - 1)
 %---------------------------------------------------------------------
 \subsection{Funzione ricorsiva ottimizzata}
 Nel Listing \ref{lst:listsumrecursivetail} è riportata l'implementazione
-della funzione ricorsiva ottimizzata con il metodo tail optimization,
+della funzione ricorsiva ottimizzata con il metodo della Tail recursion,
 Elixir come vedremo dai risultati del Benchmark risolve il problema
-definito in modo molto più veloce, come si può vedere dal codice
-implementato, per far sì che il passo ricorsivo sia l'ultima
-istruzione della funzione, necessita di passare lo stato della
+definito in modo molto più veloce.
+Come si può vedere dal codice
+implementato, Elixir ottimizza le chiamate ricorsive
+quando l'ultima istruzione è il passo ricorsivo.
+Per far sì che il passo ricorsivo sia l'ultima
+istruzione della funzione, è necessario passare lo stato della
 somma come parametro della funzione.
 
 \begin{lstlisting}[language=elixir,captionpos=b,
@@ -103,16 +114,18 @@ end
 
 %---------------------------------------------------------------------
 
-\subsection{Funzione implementata in C++ tramite Port}
+\subsection{Funzione in C++ con Port}\label{subsec:port_cpp}
 
-Con l'Inter process communication in Erlang ed Elixir, si può comunicare
-con un processo esterno tramite il meccanismo Port, e si può comunicare con
-i cosiddetti file descriptor, nel nostro caso è stata implementata la
+Questa funzione è implementata con l'Inter Process Communication
+che Erlang ed Elixir mettono a disposizione, ovvero il metodo Port
+già discusso in precedenza.
+Con Port si può comunicare con un processo esterno tramite
+file descriptor, nel nostro caso è stata implementata la
 comunicazione usando lo standard input e lo standard output. 
 Per la comunicazione si deve scegliere un formato di codifica e decodifica, per non complicare le cose si è scelto
 si è scelta una comunicazione line by line, dove la lista viene inviata
 da Elixir nel formato "$n_{1},n_{2},...,n_{m}$" scegliendo come
-carattere delimitatore la ",".
+carattere delimitatore dei valori della lista il carattere ",".
 
 Il codice C++ che risolve il nostro problema è riportato nel Listings
 \ref{lst:list_sum_port}
@@ -177,8 +190,7 @@ g++ -o list_sum_port <source-directory>/list_sum_port.cpp
 \end{lstlisting}
 
 Nel Listing \ref{lst:listsumportelixir} è riportata la funzione
-che comunica con il programma C++ scritto per la risoluzione
-del problema definito.
+che comunica con il programma C++.
 
 \begin{lstlisting}[language=elixir,captionpos=b,
 	caption={Funzione list\_sum\_port()},
@@ -211,7 +223,9 @@ end
 \end{lstlisting}
 
 %-------------------- Funzione NIF -----------------------
-\subsection{Funzione implementata in C++ tramite NIF}
+
+\newpage
+\subsection{Funzione implementata in C++ tramite NIF}\label{subsec:NIF_cpp}
 
 Nel caso del metodo NIF non c'è bisogno di decidere un
 metodo di codifica e decodifica, ma bisogna affidarsi
@@ -222,8 +236,6 @@ si devono fare le dovute conversioni.
 Nel Listing \ref{lst:list_sum_nif} è riportato il codice
 NIF per la risoluzione del problema definito.
 
-
-%// gcc -fPIC -shared -o elixir_nif.so elixir_nif.c -I $ERL_ROOT/usr/include/
 \begin{lstlisting}[language=cpp,captionpos=b,
 	caption={Funzione NIF},
 	label={lst:list_sum_nif}]
@@ -299,9 +311,13 @@ ERL_NIF_INIT(Elixir.SpeedSum, nif_funcs, NULL, NULL, NULL, NULL)
 \end{lstlisting}
 
 Come si può vedere il NIF implementato è composto da una funzione
-ausiliaria che rserve per riempire il vettore dalla lista di Elixir,
-dall'implementazione della funzione NIF list\_sum\_iterative\_nif(),
-e dalla macro ERL\_NIF\_INIT.
+ausiliaria che si occupa di scorrere la lista
+passata da Elixir e riempie un std::vector<long>.
+
+Dopodiché c'è l'implementazione della funzione
+NIF list\_sum\_iterative\_nif(), e dalla macro ERL\_NIF\_INIT
+che mette a disposizione la funzione implementata nel nostro
+modulo Elixir che ne fa uso.
 
 Si può notare che tutti i tipi che devono essere letti
 dalla VM devono essere degli ERL\_NIF\_TERM, che possono essere
@@ -349,11 +365,9 @@ end
 Per l'esecuzione del test come precedentemente detto
 ci si è affidati alla libreria Benchee \cite{bencheeo54:online}.
 
-Per includere la libreria Benchee, basta inserire nella funzione
-deps del file \textbf{mix.exs} del progetto Elixir il nome
-della libreria con la versione, la funzione diventa
-quella del Listing \ref{lst:benchee_dependencies}.
-
+Per includere la libreria Benchee, basta inserire la dipendenza
+nel file \textbf{mix.exs}.
+La funzione deps nel file diventa la seguente:
 
 \begin{lstlisting}[language=elixir,captionpos=b,
 	caption={Dipendenze di Benchee},
@@ -366,13 +380,22 @@ defp deps do
 end
 \end{lstlisting}
 
-Viene inserito anche il plug-in della libreria
+Viene inserito anche il plug-in html della libreria
 per visualizzare il report in formato html per
 una visione più chiara del risultato.
+Per scaricare le dipendenze basta eseguire il comando:
+
+\begin{lstlisting}[language=elixir]
+mix deps.get
+\end{lstlisting}
+
 
 Con la libreria Benchee sono state testate tutte e quattro le
 strategie di implementazione usate, ed è stato aggiunta la strategia
-di formattazione HTML per visualizzare i report, nel Listing \ref{lst:speedtest_function}.
+di formattazione HTML per visualizzare
+i report nel browser web.
+Nel Listing \ref{lst:speedtest_function}
+è presente la funzione che lancia il benchmark.
  
 
 \begin{lstlisting}[language=elixir,captionpos=b,
@@ -396,6 +419,7 @@ def speed_test() do
 end
 \end{lstlisting}
 
+\newpage
 La funzione costruisce un report in HTML che riporta la Tabella
 in figura \ref{fig:report_tab_interoperabilita}
 

@@ -7,7 +7,7 @@ Python e la libreria \textbf{Express}\cite{ExpressN36:online} per Node.
 I benchmark vengono eseguiti sulla stessa macchina con il tool
 \textbf{wrk}, wrk è uno strumento moderno di benchmarking HTTP
 in grado di generare un carico significativo se eseguito su una
-singola CPU multi-core \cite{wgwrkMod56:online}.
+CPU multi-core \cite{wgwrkMod56:online}.
 
 % \textbf{ab - Apache HTTP server benchmarking tool}
 % \cite{abApache17:online}.
@@ -19,7 +19,7 @@ fare load testing si dovrebbero simulare situazioni
 di calcolo reale sul server http, in questo caso si
 vuole solo avere un idea di come Elixir performa
 su una risposta breve ad una chiamata GET
-all'indirizzo localhost:<port>/ping, rispondendo
+all'indirizzo localhost:5000/ping, rispondendo
 con un semplice html con la stringa "pong".
 
 \subsubsection{Http Server Elixir}
@@ -68,9 +68,6 @@ defmodule InteroperabilityTest.MyHttpApplication do
   require Logger
 
   def start(_type, _args) do
-
-    # uncomment to start observer with the application
-    # Observer.start_observer()
 
     children = [
       {Plug.Cowboy, scheme: :http,
@@ -180,10 +177,11 @@ ed eseguire il comando per simulare richieste simutanee:
 \end{lstlisting}
 
 Il comando viene eseguito con 8 thread, e vengono lanciate
-$n$ richieste concorrenzialmente simulando richieste
+$n$ richieste concorrenziali simulando $n$ richieste
 simultanee di utenti. L'opzione --latency serve per stampare la
 distribuzione di latenza delle richieste.
 
+\newpage
 Un esempio di output:
 
 \begin{lstlisting}[language=none]
@@ -205,13 +203,13 @@ Transfer/sec:      8.93MB
 
 Sono stati effettuati dei test al variare di $n$
 richieste concorrenziali e sono riportati i risultati
-ottenuti nelle Tabelle \ref{tab:elixir_report}
+ottenuti nelle Tabelle \ref{tab:elixir_report},
 \ref{tab:node_report}, \ref{tab:python_report}.
 Si può notare come Elixir performa in modo significativo
 rispetto agli altri due server, e da notare anche la latenza media
 di Elixir rispetto agli altri, d'altronde Elixir parallelizza
 le richieste il più possibile, durante i test con il tool
-\textbf{htop} si è notato un uso della cpu al 100\%
+\textbf{htop} si è riscontrato un uso della cpu al prossima al 100\%
 mentre con Node, il server è single Thread, perciò le richieste
 vengono eseguite su un'unica CPU, e non si è percepito un'aumento
 significativo delle CPU. E' anche da notare che anche il client
@@ -219,12 +217,13 @@ eseguito sulla stessa macchina è multithreading, e fa un uso
 elevato della CPU anch'esso, perciò non si nega che Elixir
 possa performare ancor di più.
 Le righe con valori Null, sono test eseguiti in
-cui il server chiude la connessione al client per mancanza
-di risorse, non si può affermare che Node e Python possono
+cui il client chiude la connessione al client per via di un timeout.
+Non si può affermare che Node e Python non possono
 fare di meglio, i server andrebbero configurati meglio,
 in questo luogo si è voluto vedere come Elixir con la
 concorrenza leggera riesce a performare e parallelizzare
-in modo ottimale. Il server sicuramente può essere migliorato
+in modo ottimale.
+Il server sicuramente può essere migliorato
 e non è un caso di studio reale, un test Http Server
 con applicativi reali è rimandato a futuri studi.
 Ci sono benchmark in rete in cui Elixir tramite il

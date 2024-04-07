@@ -1,32 +1,43 @@
-	\section{OTP Platform}
+\section{OTP - Open Telecom Platform}
 
-La concorrenza sembra gestita quasi come un gioco in Elixir,
-ma ciò in genere non basta per semplificare lo sviluppo
-di un software, per questo Elixir supporta l'insieme di
-librerie OTP sviluppate per Erlang, con un Api più pulita
-e moderna rispetto al suo predecessore.
-L'OTP (Open Telecom Platform) è un insieme di librerie,
-strumenti e linee guida per sviluppare dei sistemi
-scalabili e resilienti in Erlang ed
-Elixir, basti pensare che per via dell'immutabilità
-dei dati e della natura funzionale del linguaggio,
-non possiamo avere variabili globali che mantengono
-uno stato, e per fare ciò, Elixir consente di dare
-la responsabilità nel mantenimento di uno stato
-ad un processo. Astrazioni come l'\textbf{Agent} o il \textbf{GenServer}
+L'OTP (Open Telecom Platform) è stato sviluppato
+da Ericsson negli anni '80 come insieme di strumenti,
+librerie e standard per affrontare le sfide specifiche
+del settore delle telecomunicazioni,
+come l'affidabilità e la tolleranza agli errori.
+
+Basato sul linguaggio di programmazione Erlang,
+OTP è stato progettato per gestire la concorrenza
+e le comunicazioni asincrone,
+rendendolo ideale per sistemi distribuiti.
+Nel corso degli anni, l'OTP ha trovato applicazioni
+anche in altri settori, diventando una scelta popolare
+per sistemi altamente affidabili e scalabili.
+
+Elixir fornisce un'interfaccia più moderna e una sintassi
+più chiara rispetto ad Erlang, mantenendo al tempo stesso
+la potenza e l'affidabilità di Erlang e OTP.
+
+Per quanto riguarda il mentanimento di uno
+stato, in Elixir si può fare affidamento ai Behaviour
+Agent e GenServer, consentendo di dare la responsabilità
+al mantenimento di uno stato ad un altro processo.
+
 ci consentono di mantenere uno stato senza dover reinventare la
-ruota nello scrivere un modulo soltanto per mantere un semplice stato.
+ruota nello scrivere un modulo soltanto per farlo.
 L'approccio nella programmazione è totalmente differente
 e piuttosto singolare rispetto ai più comuni linguaggi di programmazione,
-ma è proprio questa singolarità che può portare dei vantaggi in alcune
-nel mondo concorrenziale. 
+ma è proprio questa singolarità che può porta il linguaggio
+ad essere orientato alla concorrenza. 
 
 %---------------------------------------------------------------------------------
 
 \subsection{GenServer}
-Si può volere più controllo rispetto alle primitive utilizzate
-per gestire la concorrenza, un OTP server è un modulo con il
-"Behaviour" GenServer. 
+Per mantenere uno stato si potrebbe scrivere un modulo che
+tramite le primitive concorrenziali gestiscono lo stato
+a piacimento. Elixir però mette a disposizione il Behaviour
+GenServer, un OTP server è un modulo con il
+"Behaviour" GenServer.
 Il "Behaviour" è un meccanismo che consente di definire
 uno schema comune per un tipo specifico di processo.
 
@@ -46,7 +57,9 @@ e segnalazione degli errori. Si può anche mettere dentro un
 albero di supervisione.
 
 Questo Behaviour astrae l'interazione Client-server, come si può vedere
-in figura \ref{fig:client_server}  \cite{GenServe6:online}.
+in figura \ref{fig:client_server}  \cite{GenServe6:online},
+lo stato è gestito dal Server, e i processi client sono quelli che
+devono modificare lo stato o accedere ad esso.
 
 \begin{figure}[!htp]
     \centering
@@ -107,12 +120,12 @@ end
 Nell'esempio possiamo vedere che il modulo stack implementa
 la funzione \textbf{init/1} che inizializza lo stato con gli elementi
 iniziali quando il server viene avviato, la funzione \textbf{handle\_call/3}
-chiamata per le operazioni di :pop dello stack, in particolare
+chiamata per le operazioni di :pop dello stack,
 è una funzione sincrona, quindi viene usata quando ci si aspetta
 un valore di ritorno, infatti restituisce il valore di
 testa dello stack. La funzione \textbf{handle\_cast/2} invece viene usata per
 le operazioni asincrone, quindi nel caso in esame per l'operazione di
-push nello Stack.
+push nello Stack che non necessita di risposta.
 
 Quindi il GenServer è un'astrazione che:
 
@@ -126,21 +139,58 @@ Quindi il GenServer è un'astrazione che:
 
 \subsection{Supervisor}
 
-Un Supervisor è un modulo che implementa il Behaviour Supervisor,
-sono processi specializzati per un solo scopo: monitorare altri processi
-che chiameremo d'ora in poi processi figli.
+Un'altro concetto cardine dell'OTP è il Supervisor con cui si
+riesce a raggiungere un alto livello di Fault-tolerant.
 
-Sono questi Supervisor che ci semplificano lo sviluppo di applicazioni
-fault-tolerant, supervisionando i processi figli.
+Il compito principale di un supervisor è quello di monitorare,
+controllare e gestire il ciclo di vita dei processi all'interno
+di un sistema Erlang o Elixir. I supervisori sono 
+particolarmente utili per garantire la stabilità e 
+l'affidabilità dei sistemi distribuiti, poiché gestiscono 
+automaticamente il riavvio dei processi in caso di fallimenti, 
+garantendo che il sistema continui a funzionare anche in
+situazioni critiche.
+
+In pratica come il GenServer, un  Supervisor è un modulo
+che implementa il Behaviour Supervisor.
+
+\newpage
+
+Ci sono diversi tipi di Supervisor in Erlang ed Elixir, tra cui:
+\begin{itemize}
+  \item \textbf{Supervisor Semplice}: Questi supervisori monitorano
+  direttamente i processi figlio e li riavviano se necessario.
+  Sono utilizzati per gestire processi che non hanno stati interni
+  o che devono essere riavviati senza alcuna elaborazione specifica.
+  \item \textbf{Supervisori gerarchici}: Questi supervisori controllano
+  una gerarchia di altri supervisori e processi.
+  Possono essere configurati per riavviare solo parti
+  specifiche del sistema in caso di problemi,
+  consentendo un maggiore controllo sul comportamento di riavvio.
+  \item \textbf{Supervisori dinamici}: Questi supervisori possono
+  essere creati e configurati dinamicamente durante l'esecuzione
+  del programma, consentendo una maggiore flessibilità
+  nell'aggiunta e nella gestione dei processi.
+
+
+ 
+\end{itemize}
+
+Per implementare un Supervisor di deve decidere quali sono i processi
+figli da supervisionare, e si avvia il Supervisor
+con la funzione \textbf{start\_link/2}
 Bisogna quindi decidere quali sono i processi figli da supervisionare,
 e una volta avviato il Supervisor con la funzione \textbf{start\_link/2},
 questo ha bisogno di sapere come avviare, fermare o riavviare i suoi figli
 in caso di errore o uscita imprevista.
 
-Per questo i figli hanno bisogno di avere una funziona \textbf{child\_spec/1}
-che definisce il comportamento del supervisore. I moduli che implementano
-lo GenServer, oppure un Agent automaticamente definiscono questa funzione,
-quindi non c'è bisogno di modificare il modulo.
-La funzione child\_spec/1 è una funzione che restituisce una Map per
+Una volta avviato il Supervisor, deve sapere come fare lo start/stop/restart
+dei suoi figli da monitorare. Per questo i moduli da supervisionare
+devono implementare una funzione che definisce le specifiche,
+la funzione in questione è \textbf{child\_spec/1},
+restituisce una Map per
 configurare il comportamento in caso di supervisione.
 
+Alcuni moduli come il GenServer già definiscono questa funzione
+non avendo la necessità di ridefinirla, come il GenServer e
+il modulo Task che utilizzeremo successivamente.

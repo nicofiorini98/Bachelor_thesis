@@ -6,16 +6,17 @@ di eseguire più attività contemporaneamente.
 Questo è particolarmente importante in applicazione
 che devono gestire molteplici operazioni in parallelo
 come ad esempio un server web, applicazioni di
-elaborazione dati.
+elaborazione dati e sistemi real time.
 
 La concorrenza consente a un programma di sfruttare appieno
-le risorse disponibili, aumentando l'efficienza e migliorando
-le prestazioni complessive.
+le risorse disponibili, e migliorando
+la responsività di un programma.
 Inoltre, permette di creare sistemi più reattivi e
 scalabili, in grado di gestire un numero crescente di
 richieste senza compromettere le prestazioni.
 
-In generale, la gestione della concorrenza può essere complessa
+In generale, la gestione della concorrenza in molti linguaggi
+può essere complessa
 e soggetta a errori o comportamenti indeterminati, infatti,
 più processi o thread possono interagire tra loro in modo
 imprevedibile, essendo così costretti a usare tecniche di
@@ -32,12 +33,12 @@ stack ed il proprio heap.
 
 La concorrenza gioca un ruolo chiave per un software
 che vuole essere altamente responsivo.
-La concorrenza fa uso dei cosiddetti processi leggeri
-nella piattaforma Erlang, non sono processi del 
+La piattaforma Erlang fa uso dei cosiddetti processi leggeri,
+non sono processi del 
 sistema operativo, ma processi della
 VM Beam, chiamato processo e non thread in quanto non
 condividono memoria e sono completamente
-isolati tra di loro.
+isolati tra di loro a differenza dei thread.
 
 Un server tipico deve gestire migliaia di richieste, e
 gestirle concorrenzialmente è essenziale per non far
@@ -45,7 +46,7 @@ rimanere in attesa il client. Quello che si vuole è
 gestirli parallelamente il più possibile sfruttando
 più risorse della Cpu disponibile.
 Quello che fa la macchina virtuale per noi è permetterci
-la scalabilità,più richieste allora più risorse da allocare.
+la scalabilità, più richieste allora più risorse da allocare.
 
 Inoltre, siccome il processo è isolato, un errore in una richiesta
 può essere localizzato senza avere impatto
@@ -54,7 +55,7 @@ agli errori.
 
 Un processo appena creato occupa in memoria 326 words \cite{ErlangPr21:online},
 quindi in una macchina a 64 bit occupa 2608 byte.
-Lo si può vedere in Elixir facilmente nell'esempio \ref{lst:memoryoneprocess}
+Lo si può vedere in Elixir facilmente con l'esempio \ref{lst:memoryoneprocess}.
 
 \begin{lstlisting}[language=elixir, caption={Memoria in un processo},captionpos=b,
 	label={lst:memoryoneprocess}]
@@ -75,7 +76,7 @@ defmodule Examples.Memory do
 end
 \end{lstlisting}
 
-Infatti l'output ottenuto dall'esempio \ref{lst:memoryoneprocess}
+Infatti l'output ottenuto dall'esempio \ref{lst:memoryoneprocess} è:
 \begin{lstlisting}[language=none]
 iex> Examples.Memory.benchmark
 La memoria usata dal processo e': 2640 byte
@@ -88,21 +89,25 @@ infatti il processo non fa nulla di particolare oltre
 ad aspettare il messaggio di ":stop".
 È da notare che è proprio questa leggerezza nei processi che
 permette al linguaggio di essere orientato alla concorrenza,
-e poter usare i processi con più leggerezza rispetto
-ad altri meccanismi di altri linguaggi che usano i thread,
+permettendo di usare i processi senza troppe remure. 
+
 Un altro punto da notare è che si può migliorare significativamente
 la reattività del programma ma non l'efficienza totale del
 sistema, infatti non tutti i processi
 sono eseguiti in parallelo, quindi in una macchina con quattro
 processori non si possono eseguire più di 4 processi per volta
 ed in un normale software Elixir è normale avere migliaia di
-processi che lavorano.
+processi che lavorano, lavorando con migliaia di processi
+però permette di distribuire il delay di operazioni concorrenti.
 
 Facendo un esempio con una Cpu dual-core,
 i processi vengono eseguiti concorrenzialmente e gestiti
 dagli Scheduler della VM,
 in figura \ref{fig:concorrenza_beam} è mostrato come
-la VM gestisce i processi di default.
+la VM gestisce i processi, la VM è un unico processo
+nel sistema operativo e alloca uno scheduler per ogni
+core logico disponibile sulla macchina, gli scheduler si
+occupano di gestire l'esecuzione dei processi uno per volta.
 
 \begin{figure}[!htp]
     \centering
@@ -128,22 +133,23 @@ dei canali di comunicazione detti \textbf{"mailbox"}.
 Ogni processo ha una propria mailbox dove avviene la
 ricezione del messaggio da parte di altri processi.
 
-Conoscendo il PID di un processo può avvenire la comunicazione
+I processi sono identificati da un PID univoco,
+e conoscendo il PID di un processo può avvenire la comunicazione
 attraverso la primitiva fornita dal linguaggio \textbf{send/2}
 che permette di inviare un messaggio ad un processo
 come avviene nell'esempio \ref{lst:memoryoneprocess}, dove
-il processo principale crea un processo che rimane in ascolto
-tramite il blocco \textbf{receive/1},
-fin quando non riceve il messaggio di \textbf{:stop} e il processo
-viente terminato.
+il processo principale crea un altro processo che rimane in ascolto
+tramite il blocco \textbf{receive/1}.
+Quest'ultimo quando riceve il messaggio di \textbf{:stop}
+viene terminato concludendo il flusso definito dal processo.
 
 Se non ci sono messaggi nella mailbox, il processo aspetta fino a
 quando non arriva un messaggio, in particolare, 
 nell'esempio tutti i messaggi che
 non siano :stop, verranno ignorati continuando ad ascoltare altri
-messaggi.
+messaggi chiamando ricorsivamente se stesso.
 
-\subsubsection{Process Linking}
+\subsubsection{Process Linking e Process monitoring}
 
 I processi sono isolati, ma si può legare un processo
 al processo chiamante tramite un operazione di Process linking,
@@ -161,7 +167,7 @@ di altri linguaggi. Si veda l'esempio \ref{lst:processlinking}
 
 \begin{lstlisting}[language=elixir, caption={Process linking},captionpos=b,
 	label={lst:processlinking}]
-iex>spawn(fn -> raise "oops" end)
+iex(1)>spawn(fn -> raise "oops" end)
 #PID<0.58.0>
 	
 [error] Process #PID<0.58.00> raised an exception
@@ -182,6 +188,12 @@ Notiamo nell'esempio \ref{lst:processlinking} che con il comando
 la funzione spawn\_link/1 il processo va in errore e propaga
 l'errore all'ambiente interattivo iex, riavviando anche
 l'ambiente iex.
+
+Nel caso invece non si vuole propagare l'errore al processo
+chiamante, si può usare il monitoring tramite la primitiva
+spawn\_monitor, in questo caso il processo chiamante
+non va in errore insieme al processo chiamato, ma riceve
+un messaggio di :DOWN nella mailbox da poter gestire a piacimento.
 
 Si nota in conclusione al paragrafo che è possibile
 gestire migliaia di processi molto facilmente senza
