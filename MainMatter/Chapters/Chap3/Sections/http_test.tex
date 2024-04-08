@@ -209,7 +209,7 @@ Si può notare come Elixir performa in modo significativo
 rispetto agli altri due server, e da notare anche la latenza media
 di Elixir rispetto agli altri, d'altronde Elixir parallelizza
 le richieste il più possibile, durante i test con il tool
-\textbf{htop} si è riscontrato un uso della cpu al prossima al 100\%
+\textbf{htop} si è riscontrato un uso della cpu prossima al 100\%
 mentre con Node, il server è single Thread, perciò le richieste
 vengono eseguite su un'unica CPU, e non si è percepito un'aumento
 significativo delle CPU. E' anche da notare che anche il client
@@ -223,9 +223,6 @@ fare di meglio, i server andrebbero configurati meglio,
 in questo luogo si è voluto vedere come Elixir con la
 concorrenza leggera riesce a performare e parallelizzare
 in modo ottimale.
-Il server sicuramente può essere migliorato
-e non è un caso di studio reale, un test Http Server
-con applicativi reali è rimandato a futuri studi.
 Ci sono benchmark in rete in cui Elixir tramite il
 framework \textbf{Phoenix},
 riesce a gestire fino a 2 milioni di connessioni
