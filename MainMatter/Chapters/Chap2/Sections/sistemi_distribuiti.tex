@@ -1,0 +1,133 @@
+\newpage
+
+\section{Sistemi distribuiti}
+
+
+Nell'era dell'informatica moderna, la necessità di
+sviluppare applicazioni scalabili, affidabili e resilienti
+è diventata sempre più critica.
+In risposta a questa esigenza, i sistemi distribuiti sono
+emersi come una soluzione efficace per gestire carichi
+di lavoro complessi su più nodi di calcolo,
+consentendo alle applicazioni di crescere e adattarsi
+dinamicamente alle esigenze in continua evoluzione degli utenti.
+
+Elixir offre un ambiente potente e flessibile
+per lo sviluppo di sistemi distribuiti.
+Grazie al suo modello di programmazione ad attori
+e al supporto integrato per la comunicazione distribuita,
+Elixir è ideale per la creazione di applicazioni distribuite
+altamente scalabili, affidabili e resilienti.
+
+Utilizzando il modello di programmazione ad attori,
+le applicazioni possono essere decomposte in processi leggeri(attori)
+che comunicano tra loro attraverso lo scambio di messaggi asincroni.
+Questo modello semplifica la gestione della concorrenza
+e delle comunicazioni tra nodi, consentendo alle applicazioni di
+gestire carichi di lavoro elevati in modo efficiente e affidabile.
+
+La robustezza è sicuramente un obiettivo primario nei progetti
+distribuiti, e Elixir fornisce strumenti e astrazioni che semplificano
+la gestione degli imprevisti e dei guasti.
+La capacità di inviare messaggi in remoto tra i nodi,
+utilizzando gli stessi meccanismi utilizzati per la comunicazione
+locale, è un esempio di come Elixir semplifica lo sviluppo di
+sistemi distribuiti, garantendo al contempo affidabilità e resilienza.
+
+È importante sottolineare che molti dei concetti e delle pratiche
+utilizzate nello sviluppo di sistemi distribuiti in Elixir
+sono ereditati dall'Erlang Runtime, il che garantisce una base
+solida e comprovata per la costruzione di applicazioni distribuite.
+
+Uno dei principali vantaggi dei sistemi distribuiti
+in Elixir è la capacità di scalare orizzontalmente aggiungendo
+nuovi nodi al cluster. 
+Ciò consente alle applicazioni di crescere in modo flessibile
+con l'aumento del traffico e di garantire un servizio continuo
+agli utenti finali anche in caso di errori o guasti dei nodi.
+
+\subsection{Un esempio di comunicazione tra nodi}
+
+Un nodo in ogni sistema Erlang può essere identificato
+con un nome. Ad esempio si può avviare l'abiente iex
+assegnando un nome all'istanza.
+
+\begin{lstlisting}[language=elixir]
+iex --sname nico@localhost
+
+iex(nico@localhost)1> 
+	
+\end{lstlisting}
+
+Si può avviare un altra istanza:
+
+\begin{lstlisting}[language=elixir]
+iex --sname kate@localhost
+	
+iex(nico@localhost)1> 
+\end{lstlisting}
+
+Questi possono essere identificati come due nodi
+e comunicare tra loro tramite Node.spawn\_link/2,
+prende due argomenti, il nome del nodo al quale connettersi,
+e la funzione da eseguire dal processo remoto.
+
+Per la comunicazione tra i due nodi si usano le
+stesse primitive usate per la concorrenza, un nodo
+può essere visto come un processo.
+
+\subsubsection{Comunicazione su nodi in remoto}
+
+Per mandare messaggi e riceverli tra due nodi
+su macchine differenti, le istanze devono
+essere avviate con un cookie come segue:
+
+\begin{lstlisting}[language=elixir]
+iex --sname nico@localhost --cookie secret_token
+\end{lstlisting}
+
+Solo i nodi che condividono lo stesso cookie hanno
+il permesso di comunicare.
+
+Un altro modo per comunicare è tramite Node.connect/1,
+i nodi si connettono tra loro, ed Elixir mantiene un
+connessione TCP aperta tra i due nodi.
+Se altri nodi si connettono, si mantengono connessioni
+l'un l'altro, si forma così una rete denominata `fully meshed network`.
+
+
+\subsection{Considerazioni e sfide da considerare}
+
+La gestione delle connessioni tra i nodi distribuiti può
+essere complessa e non viene approfondita in questo luogo.
+La programmazione distribuita è un campo complesso ed Elixir
+prova a semplificarla usando le stesse primitive usate per la
+concorrenza, ma possono sorgere dei problemi.
+
+La gestione delle connessioni tra i nodi distribuiti può
+essere complessa.
+È necessario garantire che i nodi possano comunicare
+tra loro in modo affidabile e che le connessioni
+rimangano stabili anche in presenza di interruzioni
+di rete o guasti hardware.
+
+La comunicazione tra i nodi può essere
+vulnerabile agli attacchi di rete, quindi è importante
+implementare misure di sicurezza per proteggere i dati
+e prevenire accessi non autorizzati.
+Ciò include l'uso di connessioni sicure, autenticazione
+e autorizzazione dei nodi, e crittografia dei dati trasmessi.
+
+La tolleranza agli errori è fondamentale nei sistemi distribuiti.
+È necessario gestire i guasti dei nodi in modo che
+l'applicazione possa continuare a funzionare in modo affidabile
+anche in presenza di errori o interruzioni di servizio.
+
+La scalabilità è un altro aspetto importante nella
+programmazione distribuita.
+È necessario progettare il sistema in modo che possa
+gestire carichi di lavoro elevati e crescere in modo
+flessibile con l'aumento del traffico senza compromettere
+le prestazioni o l'affidabilità.
+
+
