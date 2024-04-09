@@ -275,7 +275,7 @@ for n = 1:16
     legend('1 process','2 processes','3 processes','4 processes', ...
         '5 processes','6 processes','7 processes','8 processes', ...
         '16 processes','32 processes','64 processes',... 
-		'128 processes','256 processes');
+        '128 processes','256 processes');
 end
 \end{lstlisting}
 
@@ -319,9 +319,9 @@ di schedulare i processi che a fare prodotti, uno zoom di questo
 andamento è riportato in figura \ref{fig:zoom_8_inizio}.
 Per pochi prodotti come previsto lo scheduling fa perdere efficienza
 alle operazioni svolte.
-Però si nota che l'andamento con pochi processi lo scheduling non porta
-ad una mancanza di efficienza nonostante le operazioni da svolgere prendono
-pochissimo tempo.
+% Però si nota che l'andamento con pochi processi lo scheduling non porta
+% ad una mancanza di efficienza nonostante le operazioni da svolgere prendono
+% pochissimo tempo.
 \begin{figure}[!htp]
     \centering
     \includegraphics[keepaspectratio=true,scale=0.335]{images/matlab/zoom_8_inizio.png}
@@ -329,10 +329,13 @@ pochissimo tempo.
   	\label{fig:zoom_8_inizio}
 \end{figure}
 
-Facendo uno zoom per un numero di prodotti più importante, come in
+Facendo uno zoom per un numero di prodotti più importante in
+un range che va di prodotti [95000, 100000), come in
 figura \ref{fig:zoom_8_fine}, si nota che con un processo le operazioni
 da svolgere risultano più lente, e già con più processi la parallelizzazione
-inizia ad avere più senso.
+inizia ad avere più senso portando un guadagno nelle performance,
+gli aspetti riguardandi il guadagno vengono approfonditi nel test del prossimo
+paragrafo.
 
 \begin{figure}[!htp]
     \centering
@@ -341,10 +344,9 @@ inizia ad avere più senso.
   	\label{fig:zoom_8_fine}
 \end{figure}
 
-Con un solo scheduler invece l'andamento con un processo risulta simile
-a quello con più processi, ma il tempo impiegato con 8 scheduler risulta
-in generale inferiore rispetto all'impiego di un solo scheduler, questo
-perchè Erlang riesce a parallelizzare il numero di prodotti da effettuare
-su più processi.
-
+\newpage
+Al variare degli scheduler istanziati nell'esecuzione del test, non si è notato
+un miglioramento delle performance, questo può essere dovuto ad un
+maggior quantità di tempo nell'allocare i processi su diversi scheduler,
+d'altronde il test effettuato esegue operazioni molto veloci.
 	

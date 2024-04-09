@@ -17,7 +17,7 @@ l'installazione tramite asdf (un tool version manager).
 Per avere l'ultima versione di Erlang ed Elixir
 su Linux bisogna affidarsi al Tool version manager \textbf{asdf}
 in quanto le versioni disponibili nei
-package manager della distro di riferimento non sono
+package manager della distro di riferimento (ubuntu) non sono
 aggiornate all'ultima versione disponibile.
 %--------------------------- ASDF -------------------
 \subsubsection{Installazione asdf}
@@ -33,6 +33,7 @@ dalla distro scelta.
 Per l'installazione di asdf basta seguire le istruzioni della
 documentazione ufficiale del tool al seguente URL: \url{https://asdf-vm.com/guide/getting-started.html}
 
+\newpage
 Le dipendenze necessarie da installare sono \textbf{curl} e \textbf{git},
 una volta installate le dipendenze richieste basta clonare la repository.
 In una distro debian i comandi risultano i seguenti:
@@ -84,7 +85,7 @@ necessaria per il corretto funzionamento dell'intellisense di VSCode:
 \end{lstlisting}
 
 Facendo attenzione ad usare la stessa sessione del terminale in cui sono
-stati eseguiti i precedenti comandi eseguire:
+stati eseguiti i precedenti comandi, eseguire:
 
 \begin{lstlisting}[language=none]
 > asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
@@ -132,6 +133,6 @@ open source, è un editor leggero che consente un esperienza di sviluppo
 piacevole e produttiva con una vasta gamma di estensioni installabili.
 Per quanto riguarda Elixir, è possibile installare l'estensione
 \textbf{ElixirLS} disponibile al seguente link:
-\url{https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls}
+\url{https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls}.
 Installabile anche direttamente dall'extension manager di VsCode.
  

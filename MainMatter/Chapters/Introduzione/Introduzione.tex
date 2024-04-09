@@ -22,6 +22,7 @@ campo dell'IoT per diversi motivi:
 	\item \textbf{Fault Tolerance}: 
 	Data la natura degli ambienti IoT, dove i dispositivi possono
 	guastarsi improvvisamente, Elixir offre strumenti per la supervisione
+	dei processi
 	e la gestione degli errori, garantendo la continuità delle operazioni
 	anche in caso di fallimenti.
 	\item \textbf{Sviluppo Rapido e Manutenzione}:
@@ -49,8 +50,8 @@ L'obiettivo principale dell'IoT è quello di automatizzare processi,
 migliorare l'efficienza, fornire informazioni in tempo reale
 e creare nuove opportunità di servizi e applicazioni.
 
-Un sistema IoT ha una vasta gamma di applicazioni ed il suo uso 
-sta crescendo velocemente nella società moderna, basta pensare alle
+Un sistema IoT ha una vasta gamma di applicazioni e le sue applicazioni 
+stanno crescendo velocemente nella società moderna, basta pensare alle
 molteplici applicazioni che spaziano dall'uso industriale
 per l'automazione, all'uso individuale con la domotica.
 
@@ -84,16 +85,16 @@ livelli come in figura \ref{fig:architettura_iot}
 	IoT è quello che interagisce direttamente con 
 	l'utente finale, fornendo interfacce user-friendly 
 	per controllare i dispositivi IoT. 
-	Include app mobili, portali web e altre interfacce utente,
+	Include app mobile, portali web e altre interfacce utente,
 	oltre a servizi middleware per la comunicazione tra dispositivi.
-	Inoltre, offre funzionalità di analisi e elaborazione dati,
-	come algoritmi di machine learning e strumenti di visualizzazione.
+	Offre funzionalità di analisi e elaborazione dati, e strumenti
+	di di visualizzazione.
 \end{enumerate}
 
 \subsubsection{Nerves}
 
-Un framework open-source in Elixir
-è Nerves \cite{NervesPr90:online}, consente di
+Un framework open-source che riguarda l'internet delel cose
+in Elixir è Nerves \cite{NervesPr90:online}, consente di
 sviluppare software embedded basato su Erlang/OTP.
 
 Offre agli sviluppatori un ambiente di sviluppo 
@@ -142,8 +143,7 @@ Il sistema così ha bisogno di essere Fault-tolerant ed è
 uno dei cavalli di battaglia della piattaforma Erlang/OTP.
 Inoltre utilizzando il meccanismo Port di Elixir,
 vengono usati i vantaggi di Rust per processare
-i dati dagli Smart Meters e processare i dati
-in modo efficiente.
+i dati dagli Smart Meters in modo efficiente.
 
 \begin{figure}[!htp]
     \centering
@@ -170,13 +170,12 @@ In particolare il lavoro effettuato è così ripartito:
 \begin{itemize}
 	\item Nel capitolo 2 si discute del linguaggio funzionale,
 	esaminando le astrazioni offerte da Elixir per lo svilluppo
-	di codice fault tolerant, si tratta la concorrenza e come la Erlang VM
-	si occupa della gestione dei processi.
+	di codice concorrenziale, fault tolerant, e scalabile.
 	\item Nel capitolo 3 si spiega il lavoro sperimentale svolto e i risultati
 	ottenuti, in particolare vengono effettuati quattro test, i primi due
 	per valutare l'efficienza della concorrenza della VM, il terzo per
 	sperimentare l'interoperabilità con il codice C/C++ confrontando le
-	performance del codice C/C++ con quello di Elixir, infine,nel quarto test
+	performance del codice C/C++ con quello di Elixir, infine, nel quarto test
 	si misura il throughput di un server Http scritto in
 	Elixir confrontandolo con dei semplici server scritti in Node e Python
 

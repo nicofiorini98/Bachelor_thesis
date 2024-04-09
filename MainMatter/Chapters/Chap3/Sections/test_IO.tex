@@ -16,6 +16,18 @@ Il codice Elixir che esegue il test è
 implementato nel modulo Elixir TaskIO e
 riportato nel Listing \ref{lst:concurrent_task_io}.
 
+I campioni di processi da testare sono:
+
+\begin{lstlisting}[language=none]
+processes=[1,2,3,4,5,6,7,8,16,32,64,128,256,512]
+\end{lstlisting}
+
+Siccome le operazioni eseguite richiedono molto più tempo
+rispetto al precedente test, i campioni di operazioni
+da effettuare iniziano da 500 operazioni e aumentando con uno
+step di 250 operazioni arrivando alle 20000 operazioni effettuate
+per ogni campione di processi della lista \textit{processes}.
+
 
 \begin{lstlisting}[language=elixir, caption={Test concorrenziali},captionpos=b,
 	label={lst:concurrent_task_io}]
@@ -354,29 +366,35 @@ avere un andamento più basso e stabile
 è quello con 4 scheduler.
 
 Quello che si evidenzia è che in ogni grafico, l'andamento
-risultante da un solo processo risulta avere un andamento alto circa il
-doppio rispetto agli altri processi, questo è in linea con ciò che
+risultante da un solo processo risulta avere un andamento più alto
+rispetto agli altri processi, questo è in linea con ciò che
 ci si aspettava, infatti con più processi la VM cerca di parallelizzare
-i processi. Con un solo scheduler ci si potrebbe aspettare che
+i processi.
+
+Con un solo scheduler ci si potrebbe aspettare che
 le operazioni con un solo processo risultano veloci quanto
 quelle con più processi, ma la CPU mentre aspetta
 che un operazione di Input e Output venga completata
-può eseguire altre istruzioni,
+può eseguire altre istruzioni, sfruttando più risorse della CPU utilizzata,
 per questo anche con un solo scheduler risulta vantaggioso
-utilizzare la computazione concorrenziale, il collo di bottiglia
+utilizzare la computazione concorrenziale in queste test,
+il collo di bottiglia
 di questo test potrebbero essere le operazioni su File e non l'utilizzo,
-di Cpu, sarebbe da approfondire
-tale questione, una cosa che si può fare in futuri sviluppi è 
+di CPU, tale questione sarebbe da approfondire, ad esempio,
+una cosa che si può fare in futuri sviluppi è 
 provare ad assegnare l'operazioni di Input ed Output ad un GenServer
 che si prende la responsabilità di scrivere su File i risultati
 a blocchi, mantenendo i risultati su uno stato che si svuota ogni
-tot operazioni, questo può portare ad un maggiore utilizzo della CPU
-dando la responsabilità delle operazioni di IO ad un altro processo.
+$n$ operazioni, questo può portare ad un maggiore utilizzo della CPU
+dando la responsabilità delle operazioni di IO ad un altro processo
+e migliorare ulteriormente le performance.
 
 Un altro punto da evidenziare è che ci sono dei picchi negli
 andamenti, questo può essere dovuto dalle operazioni
 del Garbage Collector che avviene durante l'esecuzione
-delle operazioni.
+delle operazioni, anche questo è da approfondire magari
+vedendo la memoria utilizzata durante le operazioni
+e studiando il garbage collector usato dalla VM.
 
 \subsubsection{Guadagno dei processi}
 
@@ -386,7 +404,7 @@ processi rispetto all'utilizzarne uno solo. Nel Listing \ref{lst:guadagno_matlab
 dei processi rispetto all'utilizzarne uno solo.
 Un guadagno in percetuale negativo risulta in una maggiore efficienza
 rispetto ad utilizzare un solo processo, un guadagno positivo
-risulta un degrado delle performance.
+risulta in un degrado delle performance.
 
 \begin{lstlisting}[language=none,captionpos=b,
 	caption={Guadagno rispetto ad un processo},label={lst:guadagno_matlab}]
